@@ -1,5 +1,5 @@
 #include <QtGui>
-#include "MainWindow.h"
+#include "gamewidget.h"
 
 int main(int argc, char **argv)
 {
@@ -13,7 +13,7 @@ int main(int argc, char **argv)
     initializeAllElements();
     initializeAllCombinations();
 
-    MainWindow *mw = new MainWindow();
+    GameWidget *mw = new GameWidget();
     mw->show();
 
     return app.exec();

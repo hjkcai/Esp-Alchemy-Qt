@@ -1,10 +1,10 @@
-#include "MainWindow.h"
+#include "gamewidget.h"
 #include "helper.h"
 #include <cmath>
 #include <string>
 using namespace std;
 
-MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
+GameWidget::GameWidget(QWidget *parent) : QWidget(parent)
 {
     this->setMinimumSize(550, 400);
     this->resize(550, 400);
@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
         addElementToWorkspace(element::allElements[i])->setPos(this->width() / 2 + (i - 2) * 64, this->height() / 2 - 84 / 2);
 }
 
-elementItem* MainWindow::addElementToWorkspace(const element &e)
+elementItem* GameWidget::addElementToWorkspace(const element &e)
 {
     elementItem *ei = new elementItem(e);
     ei->setZValue(workspace.length());
@@ -33,7 +33,7 @@ elementItem* MainWindow::addElementToWorkspace(const element &e)
     return ei;
 }
 
-void MainWindow::addElementToWorkspace(QGraphicsSceneMouseEvent *e)
+void GameWidget::addElementToWorkspace(QGraphicsSceneMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton)
     {
@@ -42,7 +42,7 @@ void MainWindow::addElementToWorkspace(QGraphicsSceneMouseEvent *e)
     }
 }
 
-elementItem* MainWindow::addElementToDrawer(const element &e)
+elementItem* GameWidget::addElementToDrawer(const element &e)
 {
     elementItem *ei = new elementItem(e);
     ei->setDrawerStyle(true);
@@ -82,7 +82,7 @@ elementItem* MainWindow::addElementToDrawer(const element &e)
     return ei;
 }
 
-void MainWindow::fadeInAndAdd(elementItem *item)
+void GameWidget::fadeInAndAdd(elementItem *item)
 {
     item->setOpacity(0);
     item->setParentItem(ws_parent);
@@ -95,7 +95,7 @@ void MainWindow::fadeInAndAdd(elementItem *item)
     tl->start();
 }
 
-void MainWindow::fadeOutAndRemove(elementItem *item)
+void GameWidget::fadeOutAndRemove(elementItem *item)
 {
     QTimeLineE *tl = new QTimeLineE(250);
     tl->target = item;
@@ -106,7 +106,7 @@ void MainWindow::fadeOutAndRemove(elementItem *item)
     tl->start();
 }
 
-void MainWindow::initializeWorkspace()
+void GameWidget::initializeWorkspace()
 {
     ws_scene = new QGraphicsScene();
     ws_parent = ws_scene->addRect(0, 0, this->width(), this->height(), QPen(Qt::transparent));
@@ -133,7 +133,7 @@ void MainWindow::initializeWorkspace()
     connect(add, SIGNAL(clicked()), this, SLOT(showOrHideDrawer()));
 }
 
-void MainWindow::initializeDrawer()
+void GameWidget::initializeDrawer()
 {
     dwr_scene = new drawerGraphicsScene();
     dwr_parent = dwr_scene->addRect(0, 0, 300, this->height(), QPen(Qt::transparent), QBrush(Qt::transparent));
@@ -156,7 +156,7 @@ void MainWindow::initializeDrawer()
     drawerOpened = false;
 }
 
-void MainWindow::loadGame(const QString &username)
+void GameWidget::loadGame(const QString &username)
 {
     this->username = username;
     known_combinations.clear();
@@ -192,7 +192,7 @@ void MainWindow::loadGame(const QString &username)
     delete saves;
 }
 
-void MainWindow::saveGame()
+void GameWidget::saveGame()
 {
     QString data;
     for (int i = 0; i < known_elements.length(); i++)
@@ -218,7 +218,7 @@ void MainWindow::saveGame()
     delete saves;
 }
 
-void MainWindow::setScrollBars()
+void GameWidget::setScrollBars()
 {
     ws_gv->horizontalScrollBar()->setMaximum(0);
     ws_gv->verticalScrollBar()->setMaximum(0);
@@ -228,25 +228,25 @@ void MainWindow::setScrollBars()
     dwr_gv->verticalScrollBar()->setMaximum(dwr_max);
 }
 
-void MainWindow::fadeIn_frameChanged(int frame)
+void GameWidget::fadeIn_frameChanged(int frame)
 {
     elementItem *fadeIn_target = qobject_cast<QTimeLineE *>(sender())->target;
     fadeIn_target->setOpacity(frame / 200.0);
 }
 
-void MainWindow::fadeOut_finished()
+void GameWidget::fadeOut_finished()
 {
     elementItem *fadeOut_target = qobject_cast<QTimeLineE *>(sender())->target;
     ws_parent->childItems().removeOne(fadeOut_target);
 }
 
-void MainWindow::fadeOut_frameChanged(int frame)
+void GameWidget::fadeOut_frameChanged(int frame)
 {
     elementItem *fadeOut_target = qobject_cast<QTimeLineE *>(sender())->target;
     fadeOut_target->setOpacity(1 - frame / 200.0);
 }
 
-void MainWindow::elementItems_mousePressed(QGraphicsSceneMouseEvent *e)
+void GameWidget::elementItems_mousePressed(QGraphicsSceneMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton)
         workspace.bringToFront(qobject_cast<elementItem *>(sender()));
@@ -281,7 +281,7 @@ void MainWindow::elementItems_mousePressed(QGraphicsSceneMouseEvent *e)
     }
 }
 
-void MainWindow::elementItems_mouseReleased(QGraphicsSceneMouseEvent *)
+void GameWidget::elementItems_mouseReleased(QGraphicsSceneMouseEvent *)
 {
     elementItems es = workspace.collidesItems(qobject_cast<elementItem *>(sender()), true);
     int result = combine(es.toElements());
@@ -325,13 +325,13 @@ void MainWindow::elementItems_mouseReleased(QGraphicsSceneMouseEvent *)
     setScrollBars();
 }
 
-void MainWindow::ws_gv_mousePressed(QMouseEvent *)
+void GameWidget::ws_gv_mousePressed(QMouseEvent *)
 {
     if (drawerOpened)
         showOrHideDrawer();
 }
 
-void MainWindow::showOrHideDrawer()
+void GameWidget::showOrHideDrawer()
 {
     ws_a->stop(); ws_a->setStartValue(ws_pgv->pos());
     dwr_a->stop(); dwr_a->setStartValue(dwr_pgv->pos());
@@ -352,7 +352,7 @@ void MainWindow::showOrHideDrawer()
     ws_a->start(); dwr_a->start();
 }
 
-void MainWindow::resizeEvent(QResizeEvent *e)
+void GameWidget::resizeEvent(QResizeEvent *e)
 {
     ws_parent->setRect(0, 0, this->geometry().width(), this->geometry().height());
     ws_pgv->resize(this->geometry().size());
@@ -364,13 +364,4 @@ void MainWindow::resizeEvent(QResizeEvent *e)
     dwr_gv->resize(302, this->geometry().height() + 2);
 
     setScrollBars();
-}
-
-void MainWindow::paintEvent(QPaintEvent *)
-{
-//    QPainter *painter = new QPainter(this);
-//    painter->setBrush(Qt::white);
-//    painter->setPen(Qt::transparent);
-//    painter->drawRect(0, 0, this->width(), this->height());
-//    painter->end(); delete painter;
 }

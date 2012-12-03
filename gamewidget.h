@@ -1,5 +1,5 @@
-#ifndef __Alchemy__MainWindow__
-#define __Alchemy__MainWindow__
+#ifndef __Alchemy__GameWidget__
+#define __Alchemy__GameWidget__
 
 #include <QtGui>
 #include "combination.h"
@@ -7,12 +7,13 @@
 #include "element.h"
 #include "elementItem.h"
 #include "graphics.h"
+#include "inappdialog.h"
 
-class MainWindow : public QWidget
+class GameWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit GameWidget(QWidget *parent = 0);
 
 private:
     static const int drawerAnimationDuration = 200;
@@ -66,7 +67,9 @@ private slots:
 
 protected:
     void resizeEvent(QResizeEvent *);
-    void paintEvent(QPaintEvent *);
+
+signals:
+    void ShowDialog(InAppDialog *dialog);
 };
 
 class QTimeLineE : public QTimeLine
@@ -77,4 +80,4 @@ public:
     elementItem *target;
 };
 
-#endif // __Alchemy__MainWindow__
+#endif // __Alchemy__GameWidget__
