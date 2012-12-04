@@ -69,7 +69,7 @@ protected:
     void resizeEvent(QResizeEvent *);
 
 signals:
-    void ShowDialog(InAppDialog *dialog);
+    void showDialog(InAppDialog *dialog);
 };
 
 class QTimeLineE : public QTimeLine

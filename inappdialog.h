@@ -24,10 +24,13 @@ private:
 #endif
 
 signals:
-    void DialogClosed(const DialogResult &result);
+    void dialogClose(const DialogResult &result);
+    void dialogResize(const int &w, const int &y);
+    void resized();
 
 protected:
     void closeDialog(const DialogResult &result);
+    void resizeEvent(QResizeEvent *);
 };
 
 #endif // INAPPDIALOG_H

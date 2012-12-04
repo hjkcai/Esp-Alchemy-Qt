@@ -3,7 +3,7 @@
 InAppDialog::InAppDialog(QWidget *parent) : QWidget(parent)
 {
     this->setAttribute(Qt::WA_PaintOutsidePaintEvent);
-    this->setStyleSheet("QWidget{border:1px solid white;border-radius:5px;background-color:transparent}");
+    this->setStyleSheet("QWidget{border:1px solid white;border-radius:5px;background-color:white}");
 
 #ifndef Q_OS_MAC
     _shadow = new QGraphicsDropShadowEffect(this);
@@ -16,6 +16,10 @@ InAppDialog::InAppDialog(QWidget *parent) : QWidget(parent)
 
 void InAppDialog::closeDialog(const DialogResult &result)
 {
-    this->close();
-    emit DialogClosed(result);
+    emit dialogClose(result);
+}
+
+void InAppDialog::resizeEvent(QResizeEvent *)
+{
+    emit resized();
 }

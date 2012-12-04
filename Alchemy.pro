@@ -10,7 +10,8 @@ SOURCES += \
     graphics.cpp \
     des.cpp \
     gamewidget.cpp \
-    inappdialog.cpp
+    inappdialog.cpp \
+    mainwindow.cpp
 
 RESOURCES += \
     res.qrc
@@ -26,4 +27,5 @@ HEADERS += \
     graphics.h \
     des.h \
     gamewidget.h \
-    inappdialog.h
+    inappdialog.h \
+    mainwindow.h
