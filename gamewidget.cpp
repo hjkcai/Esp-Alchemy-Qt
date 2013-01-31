@@ -1,5 +1,6 @@
 #include "gamewidget.h"
 #include "helper.h"
+#include "scrollbar.h"
 #include <cmath>
 #include <string>
 using namespace std;

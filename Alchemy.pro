@@ -11,7 +11,8 @@ SOURCES += \
     des.cpp \
     gamewidget.cpp \
     inappdialog.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    scrollbar.cpp
 
 RESOURCES += \
     res.qrc
@@ -28,4 +29,5 @@ HEADERS += \
     des.h \
     gamewidget.h \
     inappdialog.h \
-    mainwindow.h
+    mainwindow.h \
+    scrollbar.h
