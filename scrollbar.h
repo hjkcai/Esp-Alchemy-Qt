@@ -63,9 +63,7 @@ private:
     double _Yoffset;
 
 signals:
-    
-public slots:
-    
+    void valueChanged();
 };
 
 #endif // __Alchemy__ScrollBar__

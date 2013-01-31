@@ -1,6 +1,5 @@
 #include "gamewidget.h"
 #include "helper.h"
-#include "scrollbar.h"
 #include <cmath>
 #include <string>
 using namespace std;
@@ -53,7 +52,7 @@ elementItem* GameWidget::addElementToDrawer(const element &e)
 
     if (known_elements.length() == 0)
     {
-        ei->setPos(22, 10);
+        ei->setPos(15, 10);
         known_elements << ei;
     }
     else
@@ -66,7 +65,7 @@ elementItem* GameWidget::addElementToDrawer(const element &e)
                 known_elements.insert(i, ei);
                 for (int j = i; j < known_elements.length(); j++)
                 {
-                    known_elements[j]->setPos(j % 4 * 64 + 22, j / 4 * 84 + 10);
+                    known_elements[j]->setPos(j % 4 * 64 + 15, j / 4 * 84 + 10);
                 }
 
                 break;
@@ -75,7 +74,7 @@ elementItem* GameWidget::addElementToDrawer(const element &e)
 
         if (i == known_elements.length())
         {
-            ei->setPos(known_elements.length() % 4 * 64 + 22, known_elements.length() / 4 * 84 + 10);
+            ei->setPos(known_elements.length() % 4 * 64 + 15, known_elements.length() / 4 * 84 + 10);
             known_elements << ei;
         }
     }
@@ -147,8 +146,14 @@ void GameWidget::initializeDrawer()
     dwr_gv->setGeometry(-1, -1, 302, this->height() + 2);
     dwr_gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     dwr_gv->setRenderHints(QPainter::Antialiasing);
-    dwr_gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    dwr_gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     dwr_gv->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+
+    dwr_sb = new ScrollBar();
+    dwr_sb->setPos(285, 8);
+    dwr_sb->setSize(8, this->height() - 16);
+    dwr_scene->addItem(dwr_sb);
+    connect(dwr_sb, SIGNAL(valueChanged()), this, SLOT(dwr_sb_valueChanged()));
 
     dwr_a = new QPropertyAnimation(dwr_pgv, "pos", this);
     dwr_a->setDuration(drawerAnimationDuration);
@@ -226,7 +231,10 @@ void GameWidget::setScrollBars()
 
     int dwr_max = ceil(known_elements.length() / 4.0) * 84 + 20 - this->height();
     if (dwr_max < 0) dwr_max = 0;
-    dwr_gv->verticalScrollBar()->setMaximum(dwr_max);
+    dwr_sb->setMaximum(dwr_max / 84.0);
+
+    dwr_gv->verticalScrollBar()->setMaximum(0);
+    dwr_gv->verticalScrollBar()->setMinimum(0);
 }
 
 void GameWidget::fadeIn_frameChanged(int frame)
@@ -332,6 +340,12 @@ void GameWidget::ws_gv_mousePressed(QMouseEvent *)
         showOrHideDrawer();
 }
 
+void GameWidget::dwr_sb_valueChanged()
+{
+    dwr_parent->setPos(0, -dwr_sb->value() * 84);
+    setScrollBars();
+}
+
 void GameWidget::showOrHideDrawer()
 {
     ws_a->stop(); ws_a->setStartValue(ws_pgv->pos());
@@ -363,6 +377,7 @@ void GameWidget::resizeEvent(QResizeEvent *e)
     dwr_scene->updateBuffer(QSizeF(300, this->height()));
     dwr_pgv->setGeometry(dwr_pgv->x() + (this->width() - e->oldSize().width()), 0, 300, this->height());
     dwr_gv->resize(302, this->geometry().height() + 2);
+    dwr_sb->setSize(8, this->height() - 16);
 
     setScrollBars();
 }

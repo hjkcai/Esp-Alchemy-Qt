@@ -8,6 +8,7 @@
 #include "elementItem.h"
 #include "graphics.h"
 #include "inappdialog.h"
+#include "scrollbar.h"
 
 class GameWidget : public QWidget
 {
@@ -37,6 +38,7 @@ private:
     QWidget *dwr_pgv;
     graphicsViewBase *dwr_gv;
     QPropertyAnimation *dwr_a;
+    ScrollBar *dwr_sb;
 
     elementItem* addElementToWorkspace(const element &e);
     elementItem* addElementToDrawer(const element &e);
@@ -62,6 +64,7 @@ private slots:
     void fadeOut_frameChanged(int frame);
 
     void ws_gv_mousePressed(QMouseEvent *);
+    void dwr_sb_valueChanged();
 
     void showOrHideDrawer();
 

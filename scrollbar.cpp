@@ -32,7 +32,7 @@ void ScrollBar::setMaximum(const double &value)
     if (value < _min) _max = _min;
     else _max = value;
 
-    valueRange = _max - _min + 1;
+    valueRange = _max - _min;
     _update();
 }
 
@@ -41,7 +41,7 @@ void ScrollBar::setMinimum(const double &value)
     if (value > _max) _min = _max;
     else _min = value;
 
-    valueRange = _max - _min + 1;
+    valueRange = _max - _min;
     _update();
 }
 
@@ -52,6 +52,7 @@ void ScrollBar::setValue(const double &value)
     else _value = value;
 
     _update();
+    emit valueChanged();
 }
 
 void ScrollBar::hoverEnterEvent(QGraphicsSceneHoverEvent *)
@@ -120,10 +121,12 @@ void ScrollBar::wheelEvent(QGraphicsSceneWheelEvent *event)
 void ScrollBar::updateHandler()
 {
     double h = _size.height() - _size.height() / 5 * sqrt(valueRange);
+    if (h < 20) h = 20;
+
     deltaHeight = _size.height() - h;
 
     handlerBuf = QRectF(0,
-                        deltaHeight / valueRange * _value,
+                        valueRange == 0 ? 0 : deltaHeight / valueRange * _value,
                         _size.width(),
                         h);
 }
