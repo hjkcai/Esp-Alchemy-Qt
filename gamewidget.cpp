@@ -53,7 +53,7 @@ elementItem* GameWidget::addElementToDrawer(const element &e)
 
     if (known_elements.length() == 0)
     {
-        ei->setPos(15, 10);
+        ei->setPos(18, 5);
         known_elements << ei;
     }
     else
@@ -66,7 +66,7 @@ elementItem* GameWidget::addElementToDrawer(const element &e)
                 known_elements.insert(i, ei);
                 for (int j = i; j < known_elements.length(); j++)
                 {
-                    known_elements[j]->setPos(j % 4 * 64 + 15, j / 4 * 84 + 10);
+                    known_elements[j]->setPos(j % 4 * 64 + 18, j / 4 * 84 + 5);
                 }
 
                 break;
@@ -75,7 +75,7 @@ elementItem* GameWidget::addElementToDrawer(const element &e)
 
         if (i == known_elements.length())
         {
-            ei->setPos(known_elements.length() % 4 * 64 + 15, known_elements.length() / 4 * 84 + 10);
+            ei->setPos(known_elements.length() % 4 * 64 + 18, known_elements.length() / 4 * 84 + 5);
             known_elements << ei;
         }
     }
@@ -128,7 +128,6 @@ void GameWidget::initializeDrawer()
 {
     dwr = new drawerGraphicsItem();
     dwr->setPos(this->width() - 5, 0);
-    qDebug() << dwr->x();
     dwr->updateBuffer(QSizeF(300, this->height()));
     connect(dwr, SIGNAL(hoverEnter(QGraphicsSceneHoverEvent*)), this, SLOT(dwr_hoverEnter(QGraphicsSceneHoverEvent*)));
     connect(dwr, SIGNAL(hoverLeave(QGraphicsSceneHoverEvent*)), this, SLOT(dwr_hoverLeave(QGraphicsSceneHoverEvent*)));
