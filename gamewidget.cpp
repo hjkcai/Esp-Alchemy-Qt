@@ -38,7 +38,7 @@ void GameWidget::addElementToWorkspace(QGraphicsSceneMouseEvent *e)
     if (e->button() == Qt::LeftButton)
     {
         addElementToWorkspace(qobject_cast<elementItem*>(sender())->base())->setPos(this->width() / 2 - 64 / 2, this->height() / 2 - 84 / 2);
-        showOrHideDrawer();
+        //showOrHideDrawer();
     }
 }
 
@@ -122,49 +122,31 @@ void GameWidget::initializeWorkspace()
     ws_gv->setRenderHints(QPainter::Antialiasing);
     ws_gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ws_gv->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-    connect(ws_gv, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(ws_gv_mousePressed(QMouseEvent*)));
-
-    ws_a = new QPropertyAnimation(ws_pgv, "pos", this);
-    ws_a->setDuration(drawerAnimationDuration);
-    ws_a->setEasingCurve(QEasingCurve::InQuad);
-
-//    QPushButton *add = new QPushButton(ws_pgv);
-//    add->setText(tr("add"));
-//    add->setGeometry(this->width() - 15 - 75, this->height() - 15 - 25, 75, 25);
-//    connect(add, SIGNAL(clicked()), this, SLOT(showOrHideDrawer()));
 }
 
 void GameWidget::initializeDrawer()
 {
-    dwr_scene = new drawerGraphicsScene();
+    dwr = new drawerGraphicsItem();
+    dwr->setPos(this->width() - 5, 0);
+    qDebug() << dwr->x();
+    dwr->updateBuffer(QSizeF(300, this->height()));
+    connect(dwr, SIGNAL(hoverEnter(QGraphicsSceneHoverEvent*)), this, SLOT(dwr_hoverEnter(QGraphicsSceneHoverEvent*)));
+    connect(dwr, SIGNAL(hoverLeave(QGraphicsSceneHoverEvent*)), this, SLOT(dwr_hoverLeave(QGraphicsSceneHoverEvent*)));
+    ws_scene->addItem(dwr);
 
-    dwr_sb = new ScrollBar();
+    dwr_sb = new ScrollBar(dwr);
     dwr_sb->setPos(0, 8);
     dwr_sb->setSize(292, this->height() - 16);
     dwr_sb->setZValue(0);
-    dwr_scene->addItem(dwr_sb);
     connect(dwr_sb, SIGNAL(valueChanged()), this, SLOT(dwr_sb_valueChanged()));
 
     dwr_parent = new QGraphicsRectItem(0, -8, 284, this->height(), dwr_sb);
     dwr_parent->setPen(QColor(Qt::transparent));
     dwr_parent->setBrush(Qt::transparent);
 
-    dwr_pgv = new QWidget(this);
-    dwr_pgv->setGeometry(this->width() + 1, 0, 300, this->height());
-
-    dwr_gv = new graphicsViewBase(dwr_scene, dwr_pgv);
-    dwr_gv->setMouseTracking(true);
-    dwr_gv->setGeometry(-1, -1, 302, this->height() + 2);
-    dwr_gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    dwr_gv->setRenderHints(QPainter::Antialiasing);
-    dwr_gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    dwr_gv->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-
-    dwr_a = new QPropertyAnimation(dwr_pgv, "pos", this);
+    dwr_a = new QPropertyAnimation(dwr, "pos", this);
     dwr_a->setDuration(drawerAnimationDuration);
     dwr_a->setEasingCurve(QEasingCurve::InQuad);
-
-    drawerOpened = false;
 }
 
 void GameWidget::loadGame(const QString &username)
@@ -237,9 +219,6 @@ void GameWidget::setScrollBars()
     int dwr_max = ceil(known_elements.length() / 4.0) * 84 + 20 - this->height();
     if (dwr_max < 0) dwr_max = 0;
     dwr_sb->setMaximum(dwr_max / 84.0);
-
-    dwr_gv->verticalScrollBar()->setMaximum(0);
-    dwr_gv->verticalScrollBar()->setMinimum(0);
 }
 
 void GameWidget::fadeIn_frameChanged(int frame)
@@ -339,10 +318,20 @@ void GameWidget::elementItems_mouseReleased(QGraphicsSceneMouseEvent *)
     setScrollBars();
 }
 
-void GameWidget::ws_gv_mousePressed(QMouseEvent *)
+void GameWidget::dwr_hoverEnter(QGraphicsSceneHoverEvent *)
 {
-    if (drawerOpened)
-        showOrHideDrawer();
+    dwr_a->stop();
+    dwr_a->setStartValue(dwr->pos());
+    dwr_a->setEndValue(QPoint(this->width() - 300, 0));
+    dwr_a->start();
+}
+
+void GameWidget::dwr_hoverLeave(QGraphicsSceneHoverEvent *)
+{
+    dwr_a->stop();
+    dwr_a->setStartValue(dwr->pos());
+    dwr_a->setEndValue(QPoint(this->width() - 5, 0));
+    dwr_a->start();
 }
 
 void GameWidget::dwr_sb_valueChanged()
@@ -351,37 +340,16 @@ void GameWidget::dwr_sb_valueChanged()
     setScrollBars();
 }
 
-void GameWidget::showOrHideDrawer()
-{
-    ws_a->stop(); ws_a->setStartValue(ws_pgv->pos());
-    dwr_a->stop(); dwr_a->setStartValue(dwr_pgv->pos());
-
-    drawerOpened = !drawerOpened;
-
-    if (drawerOpened)
-    {
-        ws_a->setEndValue(QPoint(-300, 0));
-        dwr_a->setEndValue(QPoint(ws_pgv->width() - 300 + 1, 0));
-    }
-    else
-    {
-        ws_a->setEndValue(QPoint(0, 0));
-        dwr_a->setEndValue(QPoint(ws_pgv->width() + 1, 0));
-    }
-
-    ws_a->start(); dwr_a->start();
-}
-
 void GameWidget::resizeEvent(QResizeEvent *e)
 {
     ws_parent->setRect(0, 0, this->geometry().width(), this->geometry().height());
     ws_pgv->resize(this->geometry().size());
     ws_gv->resize(this->geometry().width() + 2, this->geometry().height() + 2);
 
-    dwr_parent->setRect(0, 0, 300, this->height());
-    dwr_scene->updateBuffer(QSizeF(300, this->height()));
-    dwr_pgv->setGeometry(dwr_pgv->x() + (this->width() - e->oldSize().width()), 0, 300, this->height());
-    dwr_gv->resize(302, this->geometry().height() + 2);
+    dwr_parent->setRect(0, -8, 284, this->height());
+    if (e->oldSize().width() != -1)
+        dwr->setPos(dwr->x() + (this->width() - e->oldSize().width()), 0);
+    dwr->updateBuffer(QSizeF(300, this->height()));
     dwr_sb->setSize(292, this->height() - 16);
 
     setScrollBars();

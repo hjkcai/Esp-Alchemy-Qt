@@ -30,31 +30,22 @@ protected:
     void mousePressEvent(QMouseEvent *event);
 };
 
-class drawerGraphicsScene : public QGraphicsScene
-{
-    Q_OBJECT
-public:
-    explicit drawerGraphicsScene(QObject *parent = 0);
-    void updateBuffer(const QSizeF &size);
-
-protected:
-    void drawBackground(QPainter *painter, const QRectF &rect);
-
-private:
-    static const int drawerSize = 300;
-    QImage buffer, scaledImageBuffer, backgroundBuffer;
-};
-
 class drawerGraphicsItem : public graphicsItemBase
 {
     Q_OBJECT
 public:
-    explicit drawerGraphicsItem(QGraphicsItem *parent = 0) : graphicsItemBase(parent) { }
+    explicit drawerGraphicsItem(QGraphicsItem *parent = 0);
     QRectF boundingRect() const;
     void updateBuffer(const QSizeF &size);
 
 protected:
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) { emit hoverEnter(event); }
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) { emit hoverLeave(event); }
     void paintEvent(QPainter *p);
+
+signals:
+    void hoverEnter(QGraphicsSceneHoverEvent *event);
+    void hoverLeave(QGraphicsSceneHoverEvent *event);
 
 private:
     static const int drawerSize = 300;

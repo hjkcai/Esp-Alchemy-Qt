@@ -18,7 +18,6 @@ public:
 
 private:
     static const int drawerAnimationDuration = 200;
-    bool drawerOpened;
 
     QString username;
     CDes des;
@@ -31,14 +30,11 @@ private:
     QGraphicsRectItem *ws_parent;
     QWidget *ws_pgv;
     graphicsViewBase *ws_gv;
-    QPropertyAnimation *ws_a;
 
-    drawerGraphicsScene *dwr_scene;
-    QGraphicsRectItem *dwr_parent;
-    QWidget *dwr_pgv;
-    graphicsViewBase *dwr_gv;
-    QPropertyAnimation *dwr_a;
+    drawerGraphicsItem *dwr;
     ScrollBar *dwr_sb;
+    QGraphicsRectItem *dwr_parent;
+    QPropertyAnimation *dwr_a;
 
     elementItem* addElementToWorkspace(const element &e);
     elementItem* addElementToDrawer(const element &e);
@@ -63,10 +59,9 @@ private slots:
     void fadeOut_finished();
     void fadeOut_frameChanged(int frame);
 
-    void ws_gv_mousePressed(QMouseEvent *);
+    void dwr_hoverEnter(QGraphicsSceneHoverEvent *);
+    void dwr_hoverLeave(QGraphicsSceneHoverEvent *);
     void dwr_sb_valueChanged();
-
-    void showOrHideDrawer();
 
 protected:
     void resizeEvent(QResizeEvent *);
