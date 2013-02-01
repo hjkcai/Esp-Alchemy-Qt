@@ -33,6 +33,7 @@ private:
     graphicsViewBase *ws_gv;
     QPropertyAnimation *ws_a;
 
+
     drawerGraphicsScene *dwr_scene;
     QGraphicsRectItem *dwr_parent;
     QWidget *dwr_pgv;

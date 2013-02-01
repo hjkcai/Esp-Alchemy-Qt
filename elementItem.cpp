@@ -93,12 +93,12 @@ void elementItem::tl_frameChanged(int msec)
     background_rect->setOpacity(fade_start + msec / 200.0 * (fade_to - fade_start));
 }
 
-void elementItem::hoverEnterEvent(QGraphicsSceneHoverEvent *)
+void elementItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 {
     fadeBackgroundRect(0, 0.5);
 }
 
-void elementItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
+void elementItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 {
     fadeBackgroundRect(0.5, 0);
 }

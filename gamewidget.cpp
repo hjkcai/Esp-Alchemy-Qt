@@ -48,6 +48,7 @@ elementItem* GameWidget::addElementToDrawer(const element &e)
     ei->setDrawerStyle(true);
     ei->setDrag(false);
     ei->setParentItem(dwr_parent);
+    ei->setZValue(1);
     connect(ei, SIGNAL(mousePressed(QGraphicsSceneMouseEvent*)), this, SLOT(addElementToWorkspace(QGraphicsSceneMouseEvent*)));
 
     if (known_elements.length() == 0)
@@ -136,7 +137,17 @@ void GameWidget::initializeWorkspace()
 void GameWidget::initializeDrawer()
 {
     dwr_scene = new drawerGraphicsScene();
-    dwr_parent = dwr_scene->addRect(0, 0, 300, this->height(), QPen(Qt::transparent), QBrush(Qt::transparent));
+
+    dwr_sb = new ScrollBar();
+    dwr_sb->setPos(/*285*/0, 8);
+    dwr_sb->setSize(292, this->height() - 16);
+    dwr_sb->setZValue(0);
+    dwr_scene->addItem(dwr_sb);
+    connect(dwr_sb, SIGNAL(valueChanged()), this, SLOT(dwr_sb_valueChanged()));
+
+    dwr_parent = new QGraphicsRectItem(0, -8, 284, this->height(), dwr_sb);
+    dwr_parent->setPen(QColor(Qt::transparent));
+    dwr_parent->setBrush(Qt::transparent);
 
     dwr_pgv = new QWidget(this);
     dwr_pgv->setGeometry(this->width() + 1, 0, 300, this->height());
@@ -149,11 +160,6 @@ void GameWidget::initializeDrawer()
     dwr_gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     dwr_gv->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
-    dwr_sb = new ScrollBar();
-    dwr_sb->setPos(285, 8);
-    dwr_sb->setSize(8, this->height() - 16);
-    dwr_scene->addItem(dwr_sb);
-    connect(dwr_sb, SIGNAL(valueChanged()), this, SLOT(dwr_sb_valueChanged()));
 
     dwr_a = new QPropertyAnimation(dwr_pgv, "pos", this);
     dwr_a->setDuration(drawerAnimationDuration);
@@ -342,7 +348,7 @@ void GameWidget::ws_gv_mousePressed(QMouseEvent *)
 
 void GameWidget::dwr_sb_valueChanged()
 {
-    dwr_parent->setPos(0, -dwr_sb->value() * 84);
+    dwr_parent->setPos(0, -dwr_sb->value() * 84 - 8);
     setScrollBars();
 }
 
@@ -377,7 +383,7 @@ void GameWidget::resizeEvent(QResizeEvent *e)
     dwr_scene->updateBuffer(QSizeF(300, this->height()));
     dwr_pgv->setGeometry(dwr_pgv->x() + (this->width() - e->oldSize().width()), 0, 300, this->height());
     dwr_gv->resize(302, this->geometry().height() + 2);
-    dwr_sb->setSize(8, this->height() - 16);
+    dwr_sb->setSize(292, this->height() - 16);
 
     setScrollBars();
 }

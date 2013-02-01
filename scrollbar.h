@@ -6,13 +6,16 @@
 class ScrollBar : public graphicsItemBase
 {
     Q_OBJECT
-    Q_PROPERTY(double opacity READ opacity WRITE setOpacity)
+    Q_PROPERTY(double drawOpacity READ drawOpacity WRITE setDrawOpacity)
     Q_PROPERTY(double value READ value WRITE setValue)
 
 public:
     explicit ScrollBar(QGraphicsItem *parent = 0);
 
     QRectF boundingRect() const;
+
+    double drawOpacity() const { return _drawOpacity; }
+    void setDrawOpacity(const double &value) { _drawOpacity = value; this->update(); }
 
     double maximum() const { return _max; }
     void setMaximum(const double &value);
@@ -32,8 +35,8 @@ public:
     void setValue(const double &value);
 
 protected:
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
+    void hoverMoveEvent(QGraphicsSceneHoverEvent *e);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
@@ -45,6 +48,8 @@ private:
     double _min;
     QSizeF _size;
     double _value;
+    double _drawOpacity;
+
     void _update()
     {
         updateHandler();
@@ -61,6 +66,9 @@ private:
 
     bool _pressed;
     double _Yoffset;
+
+    bool intersects(const QPointF &pos)
+    { return handlerBuf.intersects(QRectF(pos, QSizeF(0.1, 0.1))); }
 
 signals:
     void valueChanged();

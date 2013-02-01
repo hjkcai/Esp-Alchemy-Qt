@@ -69,11 +69,11 @@ private slots:
     void tl_frameChanged(int msec);
     
 protected:
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
-    void mousePressEvent(QGraphicsSceneMouseEvent *);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
+    void mousePressEvent(QGraphicsSceneMouseEvent *e);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) { }
 };
 
