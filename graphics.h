@@ -45,4 +45,21 @@ private:
     QImage buffer, scaledImageBuffer, backgroundBuffer;
 };
 
+class drawerGraphicsItem : public graphicsItemBase
+{
+    Q_OBJECT
+public:
+    explicit drawerGraphicsItem(QGraphicsItem *parent = 0) : graphicsItemBase(parent) { }
+    QRectF boundingRect() const;
+    void updateBuffer(const QSizeF &size);
+
+protected:
+    void paintEvent(QPainter *p);
+
+private:
+    static const int drawerSize = 300;
+    QImage buffer, scaledImageBuffer, backgroundBuffer;
+    QSizeF _size;
+};
+
 #endif // GRAPHICS_H

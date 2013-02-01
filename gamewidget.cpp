@@ -110,7 +110,7 @@ void GameWidget::fadeOutAndRemove(elementItem *item)
 void GameWidget::initializeWorkspace()
 {
     ws_scene = new QGraphicsScene();
-    ws_parent = ws_scene->addRect(0, 0, this->width(), this->height(), QPen(Qt::transparent));
+    ws_parent = ws_scene->addRect(0, 0, this->width(), this->height(), QPen(Qt::transparent), QBrush(Qt::white));
 
     ws_pgv = new QWidget(this);
     ws_pgv->setGeometry(0, 0, this->width(), this->height());
@@ -128,10 +128,10 @@ void GameWidget::initializeWorkspace()
     ws_a->setDuration(drawerAnimationDuration);
     ws_a->setEasingCurve(QEasingCurve::InQuad);
 
-    QPushButton *add = new QPushButton(ws_pgv);
-    add->setText(tr("add"));
-    add->setGeometry(this->width() - 15 - 75, this->height() - 15 - 25, 75, 25);
-    connect(add, SIGNAL(clicked()), this, SLOT(showOrHideDrawer()));
+//    QPushButton *add = new QPushButton(ws_pgv);
+//    add->setText(tr("add"));
+//    add->setGeometry(this->width() - 15 - 75, this->height() - 15 - 25, 75, 25);
+//    connect(add, SIGNAL(clicked()), this, SLOT(showOrHideDrawer()));
 }
 
 void GameWidget::initializeDrawer()
@@ -139,7 +139,7 @@ void GameWidget::initializeDrawer()
     dwr_scene = new drawerGraphicsScene();
 
     dwr_sb = new ScrollBar();
-    dwr_sb->setPos(/*285*/0, 8);
+    dwr_sb->setPos(0, 8);
     dwr_sb->setSize(292, this->height() - 16);
     dwr_sb->setZValue(0);
     dwr_scene->addItem(dwr_sb);
@@ -159,7 +159,6 @@ void GameWidget::initializeDrawer()
     dwr_gv->setRenderHints(QPainter::Antialiasing);
     dwr_gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     dwr_gv->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-
 
     dwr_a = new QPropertyAnimation(dwr_pgv, "pos", this);
     dwr_a->setDuration(drawerAnimationDuration);
