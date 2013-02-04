@@ -9,13 +9,25 @@ class graphicsItemBase : public QGraphicsObject
 public:
     explicit graphicsItemBase(QGraphicsItem *parent) : QGraphicsObject(parent) { }
 
+    virtual QRectF boundingRect() const { return QRectF(QPointF(0, 0), _size); }
+
+    QSizeF size() const { return _size; }
+    void setSize(const QSizeF &value);
+    void setSize(const double &w, const double &h) { setSize(QSizeF(w, h)); }
+
 signals:
     void userPaint(QPainter *painter);
 
 protected:
+    QSizeF _size;
+
     virtual void paintEvent(QPainter *) { }
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
+
+    virtual void resizeEvent(QResizeEvent *) { }
 };
+
+// ----------
 
 class graphicsViewBase : public QGraphicsView
 {
@@ -30,12 +42,13 @@ protected:
     void mousePressEvent(QMouseEvent *event);
 };
 
+// ----------
+
 class drawerGraphicsItem : public graphicsItemBase
 {
     Q_OBJECT
 public:
     explicit drawerGraphicsItem(QGraphicsItem *parent = 0);
-    QRectF boundingRect() const;
     void updateBuffer(const QSizeF &size);
 
 protected:
@@ -50,7 +63,28 @@ signals:
 private:
     static const int drawerSize = 300;
     QImage buffer, scaledImageBuffer, backgroundBuffer;
-    QSizeF _size;
+};
+
+// ----------
+
+class dialogBase : public graphicsItemBase
+{
+    Q_OBJECT
+public:
+    enum DialogResult
+    {
+        None,
+        OK,
+        Cancel
+    };
+
+    explicit dialogBase(QGraphicsItem *parent = 0);
+
+protected:
+    void paintEvent(QPainter *p);
+
+private:
+    QGraphicsDropShadowEffect *_shadow;
 };
 
 #endif // GRAPHICS_H

@@ -13,6 +13,9 @@ public:
 private:
     InAppDialog *dialog;
 
+protected:
+    void resizeEvent(QResizeEvent *);
+
 public slots:
     void showDialog(InAppDialog *d);
 

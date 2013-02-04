@@ -18,8 +18,6 @@ public:
     explicit imageItem(QGraphicsItem *parent) : graphicsItemBase(parent) { }
     explicit imageItem(const QImage &image, QGraphicsItem *parent);
     
-    QRectF boundingRect() const;
-    
     QImage image() const { return _image; }
     void setImage(const QImage &value)
     {
@@ -31,14 +29,9 @@ public:
     PaintMode paintMode() const { return _paintMode; }
     void setPaintMode(const PaintMode &value) { _paintMode = value; this->update(); }
 
-    QSizeF size() const { return _size; }
-    void setSize(const QSizeF &value) { _size = value; this->update(); }
-    void setSize(const double &w, const double &h) { _size = QSizeF(w, h); this->update(); }
-
 private:
     QImage _image;
     PaintMode _paintMode;
-    QSizeF _size;
     
 protected:
     void paintEvent(QPainter *painter);

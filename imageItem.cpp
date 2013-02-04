@@ -9,11 +9,6 @@ imageItem::imageItem(const QImage &image, QGraphicsItem *parent) : graphicsItemB
     _image = image;
 }
 
-QRectF imageItem::boundingRect() const
-{
-    return QRectF(0, 0, this->_size.width(), this->_size.height());
-}
-
 void imageItem::paintEvent(QPainter *painter)
 {
     switch (this->_paintMode)

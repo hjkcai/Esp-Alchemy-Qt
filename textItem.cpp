@@ -19,11 +19,6 @@ textItem::textItem(const QString &text, QGraphicsItem *parent) : graphicsItemBas
     setSize(75, 23);
 }
 
-QRectF textItem::boundingRect() const
-{
-    return QRectF(0, 0, this->_size.width(), this->_size.height());
-}
-
 void textItem::paintEvent(QPainter *painter)
 {
     painter->setRenderHint(QPainter::Antialiasing);

@@ -1,4 +1,5 @@
 #include "gamewidget.h"
+#include "graphics.h"
 #include "helper.h"
 #include <cmath>
 #include <string>

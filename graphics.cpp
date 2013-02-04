@@ -9,6 +9,15 @@ void graphicsItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     emit userPaint(painter);
 }
 
+void graphicsItemBase::setSize(const QSizeF &value)
+{
+    QSizeF *oldValue = &_size;
+    _size = value;
+
+    resizeEvent(new QResizeEvent(_size.toSize(), oldValue->toSize()));
+    this->update();
+}
+
 void graphicsViewBase::mousePressEvent(QMouseEvent *event)
 {
     emit mousePress(event);
@@ -24,11 +33,6 @@ drawerGraphicsItem::drawerGraphicsItem(QGraphicsItem *parent)  : graphicsItemBas
 void drawerGraphicsItem::paintEvent(QPainter *p)
 {
     p->drawImage(0, 0, buffer);
-}
-
-QRectF drawerGraphicsItem::boundingRect() const
-{
-    return QRectF(QPointF(0, 0), _size);
 }
 
 void drawerGraphicsItem::updateBuffer(const QSizeF &size)
@@ -69,3 +73,21 @@ void drawerGraphicsItem::updateBuffer(const QSizeF &size)
     _size = size;
 }
 
+dialogBase::dialogBase(QGraphicsItem *parent) : graphicsItemBase(parent)
+{
+    _shadow = new QGraphicsDropShadowEffect(this);
+    _shadow->setBlurRadius(25);
+    _shadow->setColor(QColor(0, 0, 0, 160));
+    _shadow->setOffset(0, 5);
+    this->setGraphicsEffect(_shadow);
+}
+
+void dialogBase::paintEvent(QPainter *p)
+{
+    p->setRenderHint(QPainter::Antialiasing);
+    p->translate(0.5, 0.5);
+
+    p->setPen(QColor(Qt::gray));
+    p->setBrush(QColor(255, 255, 255, 255));
+    p->drawRoundedRect(this->boundingRect(), 5, 5);
+}

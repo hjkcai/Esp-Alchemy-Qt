@@ -5,12 +5,17 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 }
 
+void MainWindow::resizeEvent(QResizeEvent *)
+{
+    dialogResized();
+}
+
 void MainWindow::showDialog(InAppDialog *d)
 {
     this->dialog = d;
 
     dialog->setParent(this);
-    dialog->setWindowOpacity(0);
+    dialog->setWindowOpacity(1);
     connect(dialog, SIGNAL(resized()), this, SLOT(dialogResized()));
     connect(dialog, SIGNAL(dialogClose(DialogResult)), this, SLOT(dialogClose(InAppDialog::DialogResult)));
 }

@@ -69,8 +69,8 @@ private slots:
     void tl_frameChanged(int msec);
     
 protected:
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
