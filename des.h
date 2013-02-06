@@ -1,6 +1,7 @@
 #ifndef __Alchemy__des__
 #define __Alchemy__des__
 
+#include <cstring>
 #include <string>
 using namespace std;
 

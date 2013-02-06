@@ -6,6 +6,8 @@
 class graphicsItemBase : public QGraphicsObject
 {
     Q_OBJECT
+    Q_PROPERTY(QSizeF size READ size WRITE setSize)
+
 public:
     explicit graphicsItemBase(QGraphicsItem *parent) : QGraphicsObject(parent) { }
 
@@ -17,6 +19,7 @@ public:
 
 signals:
     void userPaint(QPainter *painter);
+    void resized(QResizeEvent *);
 
 protected:
     QSizeF _size;
@@ -24,7 +27,7 @@ protected:
     virtual void paintEvent(QPainter *) { }
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 
-    virtual void resizeEvent(QResizeEvent *) { }
+    virtual void resizeEvent(QResizeEvent *e) { emit resized(e); }
 };
 
 // ----------

@@ -70,6 +70,9 @@ private:
     bool intersects(const QPointF &pos)
     { return handlerBuf.intersects(QRectF(pos, QSizeF(0.1, 0.1))); }
 
+private slots:
+    void _scroll_finished();
+
 signals:
     void valueChanged();
 };

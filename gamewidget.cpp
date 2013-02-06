@@ -1,5 +1,4 @@
 #include "gamewidget.h"
-#include "graphics.h"
 #include "helper.h"
 #include <cmath>
 #include <string>
@@ -11,6 +10,8 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent)
     this->resize(550, 400);
     this->setWindowTitle(tr("Alchemy"));
 
+    dialog = NULL;
+
     initializeWorkspace();
     initializeDrawer();
 
@@ -19,6 +20,17 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent)
 
     for (int i = 0; i < 4; i++)
         addElementToWorkspace(element::allElements[i])->setPos(this->width() / 2 + (i - 2) * 64, this->height() / 2 - 84 / 2);
+
+    dialogBase *db = new dialogBase();
+    db->setSize(123,164);
+    //showDialog(db);
+}
+
+void GameWidget::showDialog(dialogBase *d)
+{
+    dialog = d;
+    ws_scene->addItem(dialog);
+    dialog_resized(NULL);
 }
 
 elementItem* GameWidget::addElementToWorkspace(const element &e)
@@ -112,6 +124,7 @@ void GameWidget::initializeWorkspace()
 {
     ws_scene = new QGraphicsScene();
     ws_parent = ws_scene->addRect(0, 0, this->width(), this->height(), QPen(Qt::transparent), QBrush(Qt::white));
+    //ws_parent->setAcceptHoverEvents(false);
 
     ws_pgv = new QWidget(this);
     ws_pgv->setGeometry(0, 0, this->width(), this->height());
@@ -216,7 +229,7 @@ void GameWidget::setScrollBars()
     ws_gv->horizontalScrollBar()->setMaximum(0);
     ws_gv->verticalScrollBar()->setMaximum(0);
 
-    int dwr_max = ceil(known_elements.length() / 4.0) * 84 + 20 - this->height();
+    int dwr_max = ceil(known_elements.length() / 4.0) * 84 + 28 - this->height();
     if (dwr_max < 0) dwr_max = 0;
     dwr_sb->setMaximum(dwr_max / 84.0);
 }
@@ -336,8 +349,14 @@ void GameWidget::dwr_hoverLeave(QGraphicsSceneHoverEvent *)
 
 void GameWidget::dwr_sb_valueChanged()
 {
-    dwr_parent->setPos(0, -dwr_sb->value() * 84 - 8);
+
+    dwr_parent->setPos(0, -dwr_sb->value() * 84);
     setScrollBars();
+}
+
+void GameWidget::dialog_resized(QResizeEvent *)
+{
+    dialog->setPos(this->width() / 2 - dialog->size().width() / 2, this->height() / 2 - dialog->size().height() / 2);
 }
 
 void GameWidget::resizeEvent(QResizeEvent *e)
@@ -351,6 +370,8 @@ void GameWidget::resizeEvent(QResizeEvent *e)
         dwr->setPos(dwr->x() + (this->width() - e->oldSize().width()), 0);
     dwr->updateBuffer(QSizeF(300, this->height()));
     dwr_sb->setSize(292, this->height() - 16);
+
+    if (dialog) dialog_resized(NULL);
 
     setScrollBars();
 }

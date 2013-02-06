@@ -11,6 +11,7 @@ ScrollBar::ScrollBar(QGraphicsItem *parent) :
     _scroll = new QPropertyAnimation(this, "value");
     _scroll->setDuration(200);
     _scroll->setEasingCurve(QEasingCurve::OutQuad);
+    connect(_scroll, SIGNAL(finished()), this, SLOT(_scroll_finished()));
 
     _max = 0; _min = 0; _value = 0; deltaHeight = 0; _drawOpacity = 1;
     handlerBuf = QRectF(0, 0, _size.width(), 0);
@@ -47,12 +48,14 @@ void ScrollBar::setMinimum(const double &value)
 
 void ScrollBar::setValue(const double &value)
 {
+    bool changed = value != _value;
+
     if (value > _max) _value = _max;
     else if (value < _min) _value = _min;
     else _value = value;
 
     _update();
-    emit valueChanged();
+    if (changed) emit valueChanged();
 }
 
 void ScrollBar::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
@@ -87,7 +90,7 @@ void ScrollBar::hoverMoveEvent(QGraphicsSceneHoverEvent *e)
 void ScrollBar::mouseMoveEvent(QGraphicsSceneMouseEvent *e)
 {
     if (_pressed)
-        setValue(valueRange / deltaHeight * (e->pos().y() - _Yoffset));
+        setValue(deltaHeight != 0 ? valueRange / deltaHeight * (e->pos().y() - _Yoffset) : 0);
 }
 
 void ScrollBar::mousePressEvent(QGraphicsSceneMouseEvent *e)
@@ -119,7 +122,13 @@ void ScrollBar::paintEvent(QPainter *p)
 
 void ScrollBar::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
+    // 防止过快移动
+    // 需要更改为TimeLine型从而更好地控制动画
+    int cur = _scroll->currentTime() + (200 - _scroll->duration());
+    if (cur > 150) cur = 0;
+
     _scroll->stop();
+    _scroll->setDuration(200 - cur);
     _scroll->setStartValue(_value);
 
     double end = _scroll->endValue().toDouble();
@@ -131,8 +140,14 @@ void ScrollBar::wheelEvent(QGraphicsSceneWheelEvent *event)
     else if (end < _min) end = _min;
     _scroll->setEndValue(end);
 
-    if (_scroll->startValue() != _scroll->endValue())
-        _scroll->start();
+    _scroll->start();
+}
+
+void ScrollBar::_scroll_finished()
+{
+    _scroll->setStartValue(_scroll->endValue());
+    _scroll->setCurrentTime(0);
+    _scroll->setDuration(200);
 }
 
 void ScrollBar::updateHandler()

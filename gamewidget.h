@@ -15,6 +15,7 @@ class GameWidget : public QWidget
     Q_OBJECT
 public:
     explicit GameWidget(QWidget *parent = 0);
+    void showDialog(dialogBase *d);
 
 private:
     static const int drawerAnimationDuration = 200;
@@ -35,6 +36,8 @@ private:
     ScrollBar *dwr_sb;
     QGraphicsRectItem *dwr_parent;
     QPropertyAnimation *dwr_a;
+
+    dialogBase *dialog;
 
     elementItem* addElementToWorkspace(const element &e);
     elementItem* addElementToDrawer(const element &e);
@@ -63,11 +66,10 @@ private slots:
     void dwr_hoverLeave(QGraphicsSceneHoverEvent *);
     void dwr_sb_valueChanged();
 
+    void dialog_resized(QResizeEvent *);
+
 protected:
     void resizeEvent(QResizeEvent *);
-
-signals:
-    void showDialog(InAppDialog *dialog);
 };
 
 class QTimeLineE : public QTimeLine
