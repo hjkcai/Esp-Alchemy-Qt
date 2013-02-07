@@ -1,5 +1,5 @@
-#ifndef __Alchemy__element__
-#define __Alchemy__element__
+#ifndef ELEMENT_H
+#define ELEMENT_H
 
 #include <QObject>
 #include <QImage>
@@ -43,4 +43,4 @@ public:
 
 void initializeAllElements();
 
-#endif // __Alchemy__element__
+#endif // ELEMENT_H

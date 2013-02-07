@@ -11,6 +11,15 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent)
     this->setWindowTitle(tr("Alchemy"));
 
     dialog = NULL;
+    dialog_a = new QPropertyAnimation(dialog, "opacity", this);
+    dialog_a->setStartValue(0);
+    dialog_a->setEndValue(1);
+    dialog_a->setDuration(200);
+    connect(dialog_a, SIGNAL(finished()), this, SLOT(dialog_a_finished()));
+
+    shield = new mouseShield();
+    shield->setSize(550, 400);
+    connect(shield, SIGNAL(mouseReleased()), this, SLOT(shield_mouseReleased()));
 
     initializeWorkspace();
     initializeDrawer();
@@ -20,17 +29,22 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent)
 
     for (int i = 0; i < 4; i++)
         addElementToWorkspace(element::allElements[i])->setPos(this->width() / 2 + (i - 2) * 64, this->height() / 2 - 84 / 2);
-
-    dialogBase *db = new dialogBase();
-    db->setSize(123,164);
-    //showDialog(db);
 }
 
 void GameWidget::showDialog(dialogBase *d)
 {
     dialog = d;
-    ws_scene->addItem(dialog);
+    dialog->setOpacity(0);
     dialog_resized(NULL);
+
+    ws_scene->addItem(dialog);
+    ws_scene->addItem(shield);
+
+    dialog_a->setTargetObject(dialog);
+    dialog_a->setDirection(QPropertyAnimation::Forward);
+    dialog_a->start();
+    ws_blur_a->setDirection(QPropertyAnimation::Forward);
+    ws_blur_a->start();
 }
 
 elementItem* GameWidget::addElementToWorkspace(const element &e)
@@ -136,6 +150,15 @@ void GameWidget::initializeWorkspace()
     ws_gv->setRenderHints(QPainter::Antialiasing);
     ws_gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ws_gv->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+
+    ws_blur = new QGraphicsBlurEffect(this);
+    ws_blur->setBlurRadius(0);
+    ws_parent->setGraphicsEffect(ws_blur);
+
+    ws_blur_a = new QPropertyAnimation(ws_blur, "blurRadius", this);
+    ws_blur_a->setStartValue(0);
+    ws_blur_a->setEndValue(5);
+    ws_blur_a->setDuration(200);
 }
 
 void GameWidget::initializeDrawer()
@@ -147,7 +170,7 @@ void GameWidget::initializeDrawer()
     connect(dwr, SIGNAL(hoverLeave(QGraphicsSceneHoverEvent*)), this, SLOT(dwr_hoverLeave(QGraphicsSceneHoverEvent*)));
     ws_scene->addItem(dwr);
 
-    dwr_sb = new ScrollBar(dwr);
+    dwr_sb = new scrollBar(dwr);
     dwr_sb->setPos(0, 8);
     dwr_sb->setSize(292, this->height() - 16);
     dwr_sb->setZValue(0);
@@ -349,14 +372,34 @@ void GameWidget::dwr_hoverLeave(QGraphicsSceneHoverEvent *)
 
 void GameWidget::dwr_sb_valueChanged()
 {
-
     dwr_parent->setPos(0, -dwr_sb->value() * 84);
     setScrollBars();
 }
 
 void GameWidget::dialog_resized(QResizeEvent *)
 {
-    dialog->setPos(this->width() / 2 - dialog->size().width() / 2, this->height() / 2 - dialog->size().height() / 2);
+    dialog->setPos(this->width() / 2 - (int)dialog->size().width() / 2, this->height() / 2 - (int)dialog->size().height() / 2);
+}
+
+void GameWidget::shield_mouseReleased()
+{
+    // closeDialog()
+    dialog_a->setTargetObject(dialog);
+    dialog_a->setDirection(QPropertyAnimation::Backward);
+    dialog_a->start();
+    ws_blur_a->setDirection(QPropertyAnimation::Backward);
+    ws_blur_a->start();
+}
+
+void GameWidget::dialog_a_finished()
+{
+    if (dialog_a->direction() == QPropertyAnimation::Forward) return;
+
+    ws_scene->removeItem(dialog);
+    ws_scene->removeItem(shield);
+
+    delete dialog;
+    dialog = NULL;
 }
 
 void GameWidget::resizeEvent(QResizeEvent *e)
@@ -372,6 +415,7 @@ void GameWidget::resizeEvent(QResizeEvent *e)
     dwr_sb->setSize(292, this->height() - 16);
 
     if (dialog) dialog_resized(NULL);
+    shield->setSize(this->size());
 
     setScrollBars();
 }

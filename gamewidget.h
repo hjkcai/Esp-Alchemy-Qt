@@ -1,5 +1,5 @@
-#ifndef __Alchemy__GameWidget__
-#define __Alchemy__GameWidget__
+#ifndef GAMEWIDGET_H
+#define GAMEWIDGET_H
 
 #include <QtGui>
 #include "combination.h"
@@ -7,7 +7,6 @@
 #include "element.h"
 #include "elementItem.h"
 #include "graphics.h"
-#include "inappdialog.h"
 #include "scrollbar.h"
 
 class GameWidget : public QWidget
@@ -31,13 +30,17 @@ private:
     QGraphicsRectItem *ws_parent;
     QWidget *ws_pgv;
     graphicsViewBase *ws_gv;
+    QGraphicsBlurEffect *ws_blur;
+    QPropertyAnimation *ws_blur_a;
 
     drawerGraphicsItem *dwr;
-    ScrollBar *dwr_sb;
+    scrollBar *dwr_sb;
     QGraphicsRectItem *dwr_parent;
     QPropertyAnimation *dwr_a;
 
     dialogBase *dialog;
+    QPropertyAnimation *dialog_a;
+    mouseShield *shield;
 
     elementItem* addElementToWorkspace(const element &e);
     elementItem* addElementToDrawer(const element &e);
@@ -67,6 +70,8 @@ private slots:
     void dwr_sb_valueChanged();
 
     void dialog_resized(QResizeEvent *);
+    void shield_mouseReleased();
+    void dialog_a_finished();
 
 protected:
     void resizeEvent(QResizeEvent *);
@@ -80,4 +85,4 @@ public:
     elementItem *target;
 };
 
-#endif // __Alchemy__GameWidget__
+#endif // GAMEWIDGET_H

@@ -1,5 +1,5 @@
-#ifndef __Alchemy__rectangleItem__
-#define __Alchemy__rectangleItem__
+#ifndef RECTANGLEITEM_H
+#define RECTANGLEITEM_H
 
 #include <QtGui>
 
@@ -18,4 +18,4 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 };
 
-#endif // __Alchemy__rectangleItem__
+#endif // RECTANGLEITEM_H

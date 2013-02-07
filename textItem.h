@@ -1,5 +1,5 @@
-#ifndef __Alchemy__textItem__
-#define __Alchemy__textItem__
+#ifndef TEXTITEM_H
+#define TEXTITEM_H
 
 #include <QtGui>
 #include "graphics.h"

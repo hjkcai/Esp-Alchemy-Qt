@@ -90,4 +90,24 @@ private:
     QGraphicsDropShadowEffect *_shadow;
 };
 
+// ----------
+
+class mouseShield : public graphicsItemBase
+{
+    Q_OBJECT
+public:
+    explicit mouseShield(QGraphicsItem *parent = 0) : graphicsItemBase(parent) { this->setAcceptHoverEvents(true); }
+
+signals:
+    void mouseReleased();
+
+protected:
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *) { }
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *) { }
+    void hoverMoveEvent(QGraphicsSceneHoverEvent *) { }
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *) { }
+    void mousePressEvent(QGraphicsSceneMouseEvent *) { }
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *) { emit mouseReleased(); }
+};
+
 #endif // GRAPHICS_H

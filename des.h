@@ -1,5 +1,5 @@
-#ifndef __Alchemy__des__
-#define __Alchemy__des__
+#ifndef DES_H
+#define DES_H
 
 #include <cstring>
 #include <string>
@@ -86,4 +86,4 @@ public:
     char FullKey[8];
 };
 
-#endif // __Alchemy__des__
+#endif // DES_H

@@ -1,5 +1,5 @@
-#ifndef __Alchemy__elementItem__
-#define __Alchemy__elementItem__
+#ifndef ELEMENTITEM_H
+#define ELEMENTITEM_H
 
 #include <QtGui>
 #include "element.h"
@@ -97,4 +97,4 @@ public:
 };
 
 
-#endif // __Alchemy__elementItem__
+#endif // ELEMENTITEM_H

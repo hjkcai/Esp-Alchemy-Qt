@@ -1,6 +1,6 @@
 #include "scrollbar.h"
 
-ScrollBar::ScrollBar(QGraphicsItem *parent) :
+scrollBar::scrollBar(QGraphicsItem *parent) :
     graphicsItemBase(parent)
 {
     _fade = new QPropertyAnimation(this, "drawOpacity");
@@ -23,12 +23,12 @@ ScrollBar::ScrollBar(QGraphicsItem *parent) :
     this->setDrawOpacity(0.2);
 }
 
-QRectF ScrollBar::boundingRect() const
+QRectF scrollBar::boundingRect() const
 {
     return QRectF(0, 0, _size.width(), _size.height());
 }
 
-void ScrollBar::setMaximum(const double &value)
+void scrollBar::setMaximum(const double &value)
 {
     if (value < _min) _max = _min;
     else _max = value;
@@ -37,7 +37,7 @@ void ScrollBar::setMaximum(const double &value)
     _update();
 }
 
-void ScrollBar::setMinimum(const double &value)
+void scrollBar::setMinimum(const double &value)
 {
     if (value > _max) _min = _max;
     else _min = value;
@@ -46,7 +46,7 @@ void ScrollBar::setMinimum(const double &value)
     _update();
 }
 
-void ScrollBar::setValue(const double &value)
+void scrollBar::setValue(const double &value)
 {
     bool changed = value != _value;
 
@@ -58,7 +58,7 @@ void ScrollBar::setValue(const double &value)
     if (changed) emit valueChanged();
 }
 
-void ScrollBar::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
+void scrollBar::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 {
     if (_drawOpacity != 0.2)
     {
@@ -68,7 +68,7 @@ void ScrollBar::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
     }
 }
 
-void ScrollBar::hoverMoveEvent(QGraphicsSceneHoverEvent *e)
+void scrollBar::hoverMoveEvent(QGraphicsSceneHoverEvent *e)
 {
 //    qDebug() << handlerBuf.x() << handlerBuf.y() << handlerBuf.right() << handlerBuf.bottom();
 //    qDebug() << e->pos().x() << e->pos().y();
@@ -87,13 +87,13 @@ void ScrollBar::hoverMoveEvent(QGraphicsSceneHoverEvent *e)
     }
 }
 
-void ScrollBar::mouseMoveEvent(QGraphicsSceneMouseEvent *e)
+void scrollBar::mouseMoveEvent(QGraphicsSceneMouseEvent *e)
 {
     if (_pressed)
         setValue(deltaHeight != 0 ? valueRange / deltaHeight * (e->pos().y() - _Yoffset) : 0);
 }
 
-void ScrollBar::mousePressEvent(QGraphicsSceneMouseEvent *e)
+void scrollBar::mousePressEvent(QGraphicsSceneMouseEvent *e)
 {
     if (intersects(e->pos()))
     {
@@ -104,12 +104,12 @@ void ScrollBar::mousePressEvent(QGraphicsSceneMouseEvent *e)
         setValue(valueRange / deltaHeight * (e->pos().y() - handlerBuf.height() / 2));
 }
 
-void ScrollBar::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
+void scrollBar::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 {
     _pressed = false;
 }
 
-void ScrollBar::paintEvent(QPainter *p)
+void scrollBar::paintEvent(QPainter *p)
 {
     p->setRenderHint(QPainter::Antialiasing);
     p->translate(0.5, 0.5);
@@ -120,7 +120,7 @@ void ScrollBar::paintEvent(QPainter *p)
     p->drawRoundedRect(handlerBuf, 4, 4);
 }
 
-void ScrollBar::wheelEvent(QGraphicsSceneWheelEvent *event)
+void scrollBar::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
     // 防止过快移动
     // 需要更改为TimeLine型从而更好地控制动画
@@ -143,14 +143,14 @@ void ScrollBar::wheelEvent(QGraphicsSceneWheelEvent *event)
     _scroll->start();
 }
 
-void ScrollBar::_scroll_finished()
+void scrollBar::_scroll_finished()
 {
     _scroll->setStartValue(_scroll->endValue());
     _scroll->setCurrentTime(0);
     _scroll->setDuration(200);
 }
 
-void ScrollBar::updateHandler()
+void scrollBar::updateHandler()
 {
     double h = _size.height() - _size.height() / 5 * sqrt(valueRange);
     if (h < 20) h = 20;

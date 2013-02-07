@@ -1,6 +1,5 @@
 #include <QtGui>
 #include "gamewidget.h"
-#include "mainwindow.h"
 
 int main(int argc, char **argv)
 {
@@ -16,13 +15,6 @@ int main(int argc, char **argv)
 
     GameWidget *mw = new GameWidget();
     mw->show();
-
-//    MainWindow *mw = new MainWindow();
-//    InAppDialog *ad = new InAppDialog();
-//    mw->resize(550, 400);
-//    ad->resize(300,300);
-//    mw->showDialog(ad);
-//    mw->show();
 
     return app.exec();
 }

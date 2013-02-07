@@ -1,16 +1,16 @@
-#ifndef __Alchemy__ScrollBar__
-#define __Alchemy__ScrollBar__
+#ifndef SCROLLBAR_H
+#define SCROLLBAR_H
 
 #include "graphics.h"
 
-class ScrollBar : public graphicsItemBase
+class scrollBar : public graphicsItemBase
 {
     Q_OBJECT
     Q_PROPERTY(double drawOpacity READ drawOpacity WRITE setDrawOpacity)
     Q_PROPERTY(double value READ value WRITE setValue)
 
 public:
-    explicit ScrollBar(QGraphicsItem *parent = 0);
+    explicit scrollBar(QGraphicsItem *parent = 0);
 
     QRectF boundingRect() const;
 
@@ -77,4 +77,4 @@ signals:
     void valueChanged();
 };
 
-#endif // __Alchemy__ScrollBar__
+#endif // SCROLLBAR_H

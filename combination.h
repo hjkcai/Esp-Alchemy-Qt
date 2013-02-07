@@ -1,5 +1,5 @@
-#ifndef __Alchemy__combination__
-#define __Alchemy__combination__
+#ifndef COMBINATION_H
+#define COMBINATION_H
 
 #include "element.h"
 
@@ -42,4 +42,4 @@ combinations readCombinations(const QString &source);
 // 组合元素，返回生成组合
 int combine(const elements &source);
 
-#endif // __Alchemy__combination__
+#endif // COMBINATION_H

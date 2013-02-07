@@ -80,6 +80,8 @@ dialogBase::dialogBase(QGraphicsItem *parent) : graphicsItemBase(parent)
     _shadow->setColor(QColor(0, 0, 0, 160));
     _shadow->setOffset(0, 5);
     this->setGraphicsEffect(_shadow);
+
+    this->setAcceptHoverEvents(true);
 }
 
 void dialogBase::paintEvent(QPainter *p)

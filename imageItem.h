@@ -1,5 +1,5 @@
-#ifndef __Alchemy__imageItem__
-#define __Alchemy__imageItem__
+#ifndef IMAGEITEM_H
+#define IMAGEITEM_H
 
 #include <QtGui>
 #include "graphics.h"

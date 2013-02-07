@@ -1,5 +1,5 @@
-#ifndef __Alchemy__helper__
-#define __Alchemy__helper__
+#ifndef HELPER_H
+#define HELPER_H
 
 #include <QtGui>
 

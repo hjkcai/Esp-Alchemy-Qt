@@ -10,8 +10,6 @@ SOURCES += \
     graphics.cpp \
     des.cpp \
     gamewidget.cpp \
-    inappdialog.cpp \
-    mainwindow.cpp \
     scrollbar.cpp
 
 RESOURCES += \
@@ -28,6 +26,4 @@ HEADERS += \
     graphics.h \
     des.h \
     gamewidget.h \
-    inappdialog.h \
-    mainwindow.h \
     scrollbar.h
