@@ -13,7 +13,7 @@ scrollBar::scrollBar(QGraphicsItem *parent) :
     _scroll->setEasingCurve(QEasingCurve::OutQuad);
     connect(_scroll, SIGNAL(finished()), this, SLOT(_scroll_finished()));
 
-    _max = 0; _min = 0; _value = 0; deltaHeight = 0; _drawOpacity = 1;
+    _max = 0; _min = 0; valueRange = 0; _value = 0; deltaHeight = 0; _drawOpacity = 1; _alwaysShow = true;
     handlerBuf = QRectF(0, 0, _size.width(), 0);
 
     _pressed = false;
@@ -21,11 +21,6 @@ scrollBar::scrollBar(QGraphicsItem *parent) :
 
     this->setAcceptHoverEvents(true);
     this->setDrawOpacity(0.2);
-}
-
-QRectF scrollBar::boundingRect() const
-{
-    return QRectF(0, 0, _size.width(), _size.height());
 }
 
 void scrollBar::setMaximum(const double &value)
@@ -58,7 +53,7 @@ void scrollBar::setValue(const double &value)
     if (changed) emit valueChanged();
 }
 
-void scrollBar::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
+void scrollBar::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 {
     if (_drawOpacity != 0.2)
     {
@@ -66,6 +61,7 @@ void scrollBar::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
         _fade->setDirection(QPropertyAnimation::Backward);
         _fade->start();
     }
+    else graphicsItemBase::hoverLeaveEvent(e);
 }
 
 void scrollBar::hoverMoveEvent(QGraphicsSceneHoverEvent *e)
@@ -85,12 +81,14 @@ void scrollBar::hoverMoveEvent(QGraphicsSceneHoverEvent *e)
         _fade->setDirection(QPropertyAnimation::Backward);
         _fade->start();
     }
+    else graphicsItemBase::hoverMoveEvent(e);
 }
 
 void scrollBar::mouseMoveEvent(QGraphicsSceneMouseEvent *e)
 {
     if (_pressed)
         setValue(deltaHeight != 0 ? valueRange / deltaHeight * (e->pos().y() - _Yoffset) : 0);
+    else graphicsItemBase::mouseMoveEvent(e);
 }
 
 void scrollBar::mousePressEvent(QGraphicsSceneMouseEvent *e)
@@ -102,15 +100,20 @@ void scrollBar::mousePressEvent(QGraphicsSceneMouseEvent *e)
     }
     else if (e->pos().x() >= _size.width() - 8)
         setValue(valueRange / deltaHeight * (e->pos().y() - handlerBuf.height() / 2));
+    else graphicsItemBase::mousePressEvent(e);
 }
 
-void scrollBar::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
+void scrollBar::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
 {
     _pressed = false;
+    if (e->pos().x() < _size.width() - 8)
+        graphicsItemBase::mouseReleaseEvent(e);
 }
 
 void scrollBar::paintEvent(QPainter *p)
 {
+    if (valueRange == 0 && !_alwaysShow) return;
+
     p->setRenderHint(QPainter::Antialiasing);
     p->translate(0.5, 0.5);
     p->setOpacity(_drawOpacity);

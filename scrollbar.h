@@ -12,7 +12,8 @@ class scrollBar : public graphicsItemBase
 public:
     explicit scrollBar(QGraphicsItem *parent = 0);
 
-    QRectF boundingRect() const;
+    bool alwaysShow() const { return _alwaysShow; }
+    void setAlwaysShow(const bool &value) { _alwaysShow = value; this->update(); }
 
     double drawOpacity() const { return _drawOpacity; }
     void setDrawOpacity(const double &value) { _drawOpacity = value; this->update(); }
@@ -23,32 +24,29 @@ public:
     double minimum() const { return _min; }
     void setMinimum(const double &value);
 
-    QSizeF size() const { return _size; }
-    void setSize(const QSizeF &value)
-    {
-        _size = value;
-        _update();
-    }
-    void setSize(const double &w, const double &h) { setSize(QSizeF(w, h)); }
-
     double value() const { return _value; }
     void setValue(const double &value);
 
 protected:
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
     void hoverMoveEvent(QGraphicsSceneHoverEvent *e);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
     void paintEvent(QPainter *p);
+    void resizeEvent(QResizeEvent *e)
+    {
+        _update();
+        graphicsItemBase::resizeEvent(e);
+    }
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
 private:
     double _max;
     double _min;
-    QSizeF _size;
     double _value;
     double _drawOpacity;
+    bool _alwaysShow;
 
     void _update()
     {

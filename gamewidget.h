@@ -48,6 +48,7 @@ private:
     void fadeInAndAdd(elementItem *item);
     void fadeOutAndRemove(elementItem *item);
 
+    void initializeDialog();
     void initializeWorkspace();
     void initializeDrawer();
     void loadGame(const QString &username);
@@ -59,6 +60,7 @@ private slots:
     void addElementToWorkspace(QGraphicsSceneMouseEvent *e);
 
     void elementItems_mousePressed(QGraphicsSceneMouseEvent *);
+    void elementItems_mouseRightButtonPressed(QGraphicsSceneMouseEvent *);
     void elementItems_mouseReleased(QGraphicsSceneMouseEvent *);
 
     void fadeIn_frameChanged(int frame);

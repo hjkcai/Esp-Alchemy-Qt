@@ -1,4 +1,5 @@
 #include "gamewidget.h"
+#include "elementdetaildialog.h"
 #include "helper.h"
 #include <cmath>
 #include <string>
@@ -10,17 +11,7 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent)
     this->resize(550, 400);
     this->setWindowTitle(tr("Alchemy"));
 
-    dialog = NULL;
-    dialog_a = new QPropertyAnimation(dialog, "opacity", this);
-    dialog_a->setStartValue(0);
-    dialog_a->setEndValue(1);
-    dialog_a->setDuration(200);
-    connect(dialog_a, SIGNAL(finished()), this, SLOT(dialog_a_finished()));
-
-    shield = new mouseShield();
-    shield->setSize(550, 400);
-    connect(shield, SIGNAL(mouseReleased()), this, SLOT(shield_mouseReleased()));
-
+    initializeDialog();
     initializeWorkspace();
     initializeDrawer();
 
@@ -34,13 +25,10 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent)
 void GameWidget::showDialog(dialogBase *d)
 {
     dialog = d;
-    dialog->setOpacity(0);
+    dialog->setParentItem(shield);
+    ws_scene->addItem(shield);
     dialog_resized(NULL);
 
-    ws_scene->addItem(dialog);
-    ws_scene->addItem(shield);
-
-    dialog_a->setTargetObject(dialog);
     dialog_a->setDirection(QPropertyAnimation::Forward);
     dialog_a->start();
     ws_blur_a->setDirection(QPropertyAnimation::Forward);
@@ -52,6 +40,7 @@ elementItem* GameWidget::addElementToWorkspace(const element &e)
     elementItem *ei = new elementItem(e);
     ei->setZValue(workspace.length());
     connect(ei, SIGNAL(mousePressed(QGraphicsSceneMouseEvent*)), this, SLOT(elementItems_mousePressed(QGraphicsSceneMouseEvent*)));
+    connect(ei, SIGNAL(mousePressed(QGraphicsSceneMouseEvent*)), this, SLOT(elementItems_mouseRightButtonPressed(QGraphicsSceneMouseEvent*)));
     connect(ei, SIGNAL(mouseReleased(QGraphicsSceneMouseEvent*)), this, SLOT(elementItems_mouseReleased(QGraphicsSceneMouseEvent*)));
 
     workspace << ei;
@@ -64,7 +53,8 @@ void GameWidget::addElementToWorkspace(QGraphicsSceneMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton)
     {
-        addElementToWorkspace(qobject_cast<elementItem*>(sender())->base())->setPos(this->width() / 2 - 64 / 2, this->height() / 2 - 84 / 2);
+        elementItem *ei = qobject_cast<elementItem*>(sender());
+        addElementToWorkspace(ei->base())->setPos(ei->mapToScene(0, 0));
         //showOrHideDrawer();
     }
 }
@@ -77,6 +67,7 @@ elementItem* GameWidget::addElementToDrawer(const element &e)
     ei->setParentItem(dwr_parent);
     ei->setZValue(1);
     connect(ei, SIGNAL(mousePressed(QGraphicsSceneMouseEvent*)), this, SLOT(addElementToWorkspace(QGraphicsSceneMouseEvent*)));
+    connect(ei, SIGNAL(mousePressed(QGraphicsSceneMouseEvent*)), this, SLOT(elementItems_mouseRightButtonPressed(QGraphicsSceneMouseEvent*)));
 
     if (known_elements.length() == 0)
     {
@@ -134,11 +125,25 @@ void GameWidget::fadeOutAndRemove(elementItem *item)
     tl->start();
 }
 
+void GameWidget::initializeDialog()
+{
+    dialog = NULL;
+
+    shield = new mouseShield();
+    shield->setSize(550, 400);
+    connect(shield, SIGNAL(mouseReleased()), this, SLOT(shield_mouseReleased()));
+
+    dialog_a = new QPropertyAnimation(shield, "opacity", this);
+    dialog_a->setStartValue(0);
+    dialog_a->setEndValue(1);
+    dialog_a->setDuration(200);
+    connect(dialog_a, SIGNAL(finished()), this, SLOT(dialog_a_finished()));
+}
+
 void GameWidget::initializeWorkspace()
 {
     ws_scene = new QGraphicsScene();
     ws_parent = ws_scene->addRect(0, 0, this->width(), this->height(), QPen(Qt::transparent), QBrush(Qt::white));
-    //ws_parent->setAcceptHoverEvents(false);
 
     ws_pgv = new QWidget(this);
     ws_pgv->setGeometry(0, 0, this->width(), this->height());
@@ -279,34 +284,14 @@ void GameWidget::elementItems_mousePressed(QGraphicsSceneMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton)
         workspace.bringToFront(qobject_cast<elementItem *>(sender()));
-    else if (e->button() == Qt::RightButton)
+}
+
+void GameWidget::elementItems_mouseRightButtonPressed(QGraphicsSceneMouseEvent *e)
+{
+    if (e->button() == Qt::RightButton)
     {
-        elementItem *ei = qobject_cast<elementItem *>(sender());
-
-        for (int i = 0; i < known_combinations.count(); i++)
-        {
-            combination *c = &combination::allCombinations[known_combinations[i]];
-
-            if (c->source.findElementByID(ei->base().id()) != -1 ||
-                c->product.findElementByID(ei->base().id()) != -1)
-            {
-                QString out;
-                for (int j = 0; j < c->source.count(); j++)
-                {
-                    out.append(c->source[j].name());
-                    if (j != c->source.count() - 1) out.append(" + ");
-                    else out.append(" = ");
-                }
-
-                for (int j = 0; j < c->product.count(); j++)
-                {
-                    out.append(c->product[j].name());
-                    if (j != c->product.count() - 1) out.append(" + ");
-                }
-
-                qDebug() << out;
-            }
-        }
+        elementDetailDialog *ed = new elementDetailDialog(qobject_cast<elementItem *>(sender())->base(), known_combinations);
+        showDialog(qobject_cast<dialogBase*>(ed));
     }
 }
 
@@ -317,7 +302,6 @@ void GameWidget::elementItems_mouseReleased(QGraphicsSceneMouseEvent *)
 
     if (!(es.length() == 0 || result == -1))
     {
-
         QPoint center = es[0]->pos().toPoint();
         for (int i = 1; i < es.length(); i++)
             center = QPoint((center.x() + es[i]->pos().toPoint().x()) / 2, (center.y() + es[i]->pos().toPoint().y()) / 2);
@@ -384,7 +368,6 @@ void GameWidget::dialog_resized(QResizeEvent *)
 void GameWidget::shield_mouseReleased()
 {
     // closeDialog()
-    dialog_a->setTargetObject(dialog);
     dialog_a->setDirection(QPropertyAnimation::Backward);
     dialog_a->start();
     ws_blur_a->setDirection(QPropertyAnimation::Backward);
@@ -395,11 +378,8 @@ void GameWidget::dialog_a_finished()
 {
     if (dialog_a->direction() == QPropertyAnimation::Forward) return;
 
-    ws_scene->removeItem(dialog);
+    delete dialog; dialog = 0;
     ws_scene->removeItem(shield);
-
-    delete dialog;
-    dialog = NULL;
 }
 
 void GameWidget::resizeEvent(QResizeEvent *e)
