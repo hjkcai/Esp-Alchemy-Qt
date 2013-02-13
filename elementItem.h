@@ -81,8 +81,6 @@ class elementItems : public QList<elementItem *>
 {
 public:
     int findItemByID(const QString &id, const int &start = 0) const;
-    int findItemByName(const QString &name, const int &start = 0) const;
-    int findItemByZOrder(const int &z, const int &start = 0) const;
 
     void bringToFront(const int &index);
     void bringToFront(elementItem *item) { bringToFront(this->indexOf(item)); }

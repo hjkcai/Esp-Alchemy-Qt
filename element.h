@@ -10,6 +10,8 @@ class elements;
 class element
 {
 public:
+    explicit element() { }
+
     QImage icon() const { return _icon; }
     QString id() const { return _id;}
     bool isBasicElement() const { return _basic; }
@@ -19,11 +21,7 @@ public:
     static elements allElements;
     static element create(const QString &id, const QImage &icon, const QString &name, const bool &terminal, const bool &basic);
 
-    //bool mark;
-
 private:
-    explicit element() { }
-
     QString _id;
     QImage _icon;
     QString _name;

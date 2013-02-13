@@ -10,7 +10,8 @@ SOURCES += \
     graphics.cpp \
     des.cpp \
     gamewidget.cpp \
-    scrollbar.cpp
+    scrollbar.cpp \
+    elementdetaildialog.cpp
 
 RESOURCES += \
     res.qrc
@@ -26,4 +27,5 @@ HEADERS += \
     graphics.h \
     des.h \
     gamewidget.h \
-    scrollbar.h
+    scrollbar.h \
+    elementdetaildialog.h

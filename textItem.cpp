@@ -4,7 +4,7 @@ textItem::textItem(QGraphicsItem *parent) : graphicsItemBase(parent)
 {
     l = new QTextDocument();
     l->setUseDesignMetrics(true);
-    l->setDefaultTextOption (QTextOption(Qt::AlignCenter));
+    l->setDefaultTextOption(QTextOption(Qt::AlignCenter));
 
     setSize(75, 23);
 }

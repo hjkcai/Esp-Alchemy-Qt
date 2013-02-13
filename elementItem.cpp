@@ -157,28 +157,6 @@ int elementItems::findItemByID(const QString &id, const int &start) const
     return -1;
 }
 
-int elementItems::findItemByName(const QString &name, const int &start) const
-{
-    for (int i = start; i < this->length(); i++)
-    {
-        if (this->at(i)->base().name().toLower() == name.toLower())
-            return i;
-    }
-
-    return -1;
-}
-
-int elementItems::findItemByZOrder(const int &z, const int &start) const
-{
-    for (int i = start; i < this->length(); i++)
-    {
-        if (this->at(i)->zValue() == z)
-            return i;
-    }
-
-    return -1;
-}
-
 void elementItems::bringToFront(const int &index)
 {
     if (index < 0 || index >= this->length()) return;
