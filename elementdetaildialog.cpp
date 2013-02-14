@@ -68,7 +68,11 @@ elementDetailDialog::elementDetailDialog(const element &target, const QList<int>
     else
     {
         QFont f = l->defaultFont();
-        f.setPointSize(10.5);
+#ifdef Q_OS_MAC
+        f.setPointSizeF(12);
+#else
+        f.setPointSizeF(10.5);
+#endif
         l->setDefaultFont(f);
     }
 
@@ -89,7 +93,11 @@ void elementDetailDialog::paintEvent(QPainter *p)
     dialogBase::paintEvent(p);
 
     QFont f = p->font(), f1 = p->font();
+#ifdef Q_OS_MAC
+    f.setPointSize(18);
+#else
     f.setPointSize(16);
+#endif
 
     p->setFont(f);
     p->setPen(QColor(Qt::black));

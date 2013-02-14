@@ -1,8 +1,12 @@
 #include "elementItem.h"
-#include "helper.h"
+#include "global.h"
 
-const QString elementItem::blackText = "<font align=\"center\" color=\"black\">%0</font>";
-const QString elementItem::whiteText = "<font align=\"center\" color=\"white\">%0</font>";
+const double HoverOpacity = 0.5;
+const double PressedOpacity = 0.75;
+const QString blackText = "<font align=\"center\" color=\"black\">%0</font>";
+const QString whiteText = "<font align=\"center\" color=\"white\">%0</font>";
+const QColor drawerStyleBackground = QColor(29, 82, 255);
+const QColor normalBackground = QColor(160, 160, 160);
 
 elementItem::elementItem(const element &base, QGraphicsItem *parent) : QGraphicsObject(parent)
 {
@@ -25,8 +29,8 @@ elementItem::elementItem(const element &base, QGraphicsItem *parent) : QGraphics
     shadow->setOffset(1);
     label->setGraphicsEffect(shadow);
 
-    tl = new QTimeLine(250);
-    tl->setFrameRange(0, 200);
+    tl = new QTimeLine(AnimationDuration);
+    tl->setFrameRange(0, AnimationDuration);
     connect(tl, SIGNAL(frameChanged(int)), this, SLOT(tl_frameChanged(int)));
 
     setDrawerStyle(false);
@@ -59,18 +63,17 @@ void elementItem::setBase(const element &value)
 void elementItem::setDrawerStyle(const bool &value)
 {
     _drawerStyle = value;
+    background_rect->setPen(QPen(Qt::transparent));
+    label->setText(whiteText.arg(_base.name()));
+
     if (_drawerStyle)
     {
-        background_rect->setBrush(QColor(29, 82, 255));
-        background_rect->setPen(QPen(Qt::transparent));
-        label->setText(whiteText.arg(_base.name()));
+        background_rect->setBrush(drawerStyleBackground);
         shadow->setColor(Qt::black);
     }
     else
     {
-        background_rect->setBrush(QColor(160, 160, 160));
-        background_rect->setPen(QPen(Qt::transparent));
-        label->setText(blackText.arg(_base.name()));
+        background_rect->setBrush(normalBackground);
         shadow->setColor(Qt::white);
     }
 }
@@ -90,17 +93,17 @@ void elementItem::fadeBackgroundRect(const double &start, const double &to)
 
 void elementItem::tl_frameChanged(int msec)
 {
-    background_rect->setOpacity(fade_start + msec / 200.0 * (fade_to - fade_start));
+    background_rect->setOpacity(fade_start + msec / AnimationDurationF * (fade_to - fade_start));
 }
 
 void elementItem::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
-    fadeBackgroundRect(0, 0.5);
+    fadeBackgroundRect(0, HoverOpacity);
 }
 
 void elementItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 {
-    fadeBackgroundRect(0.5, 0);
+    fadeBackgroundRect(HoverOpacity, 0);
 }
 
 void elementItem::mousePressEvent(QGraphicsSceneMouseEvent *e)
@@ -117,7 +120,7 @@ void elementItem::mousePressEvent(QGraphicsSceneMouseEvent *e)
         _allowDrag = true;
     }
 
-    fadeBackgroundRect(0.5, 0.75);
+    fadeBackgroundRect(HoverOpacity, PressedOpacity);
 }
 
 void elementItem::mouseMoveEvent(QGraphicsSceneMouseEvent *e)
@@ -143,7 +146,7 @@ void elementItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
         p_press.null = true;
     }
 
-    fadeBackgroundRect(0.75, 0.5);
+    fadeBackgroundRect(PressedOpacity, HoverOpacity);
 }
 
 int elementItems::findItemByID(const QString &id, const int &start) const

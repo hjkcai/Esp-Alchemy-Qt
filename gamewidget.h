@@ -17,8 +17,6 @@ public:
     void showDialog(dialogBase *d);
 
 private:
-    static const int drawerAnimationDuration = 200;
-
     QString username;
     CDes des;
 
@@ -26,6 +24,7 @@ private:
     QList<int> known_combinations;
     elementItems workspace;
 
+    // 工作区内对象
     QGraphicsScene *ws_scene;
     QGraphicsRectItem *ws_parent;
     QWidget *ws_pgv;
@@ -33,11 +32,13 @@ private:
     QGraphicsBlurEffect *ws_blur;
     QPropertyAnimation *ws_blur_a;
 
+    // 抽屉内对象
     drawerGraphicsItem *dwr;
     scrollBar *dwr_sb;
     QGraphicsRectItem *dwr_parent;
     QPropertyAnimation *dwr_a;
 
+    // 对话框有关的对象
     dialogBase *dialog;
     QPropertyAnimation *dialog_a;
     mouseShield *shield;

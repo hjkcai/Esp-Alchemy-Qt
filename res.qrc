@@ -383,4 +383,10 @@
         <file>res/zoo.png</file>
         <file>res/linen.png</file>
     </qresource>
+    <qresource prefix="/data">
+        <file>res/info_hover.png</file>
+        <file>res/info.png</file>
+        <file>res/trashcan_hover.png</file>
+        <file>res/trashcan.png</file>
+    </qresource>
 </RCC>

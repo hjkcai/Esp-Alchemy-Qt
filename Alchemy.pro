@@ -1,7 +1,6 @@
 SOURCES += \
     main.cpp \
     element.cpp \
-    helper.cpp \
     combination.cpp \
     textItem.cpp \
     rectangleItem.cpp \
@@ -11,14 +10,14 @@ SOURCES += \
     des.cpp \
     gamewidget.cpp \
     scrollbar.cpp \
-    elementdetaildialog.cpp
+    elementdetaildialog.cpp \
+    global.cpp
 
 RESOURCES += \
     res.qrc
 
 HEADERS += \
     element.h \
-    helper.h \
     combination.h \
     textItem.h \
     rectangleItem.h \
@@ -28,4 +27,5 @@ HEADERS += \
     des.h \
     gamewidget.h \
     scrollbar.h \
-    elementdetaildialog.h
+    elementdetaildialog.h \
+    global.h

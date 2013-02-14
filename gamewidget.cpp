@@ -1,14 +1,19 @@
 #include "gamewidget.h"
 #include "elementdetaildialog.h"
-#include "helper.h"
+#include "global.h"
 #include <cmath>
 #include <string>
 using namespace std;
 
+const int drawerAnimationDuration = 200;
+const int drawerItemOffsetX = 18;
+const int drawerItemOffsetY = 5;
+const QSize minSize = QSize(550, 400);
+
 GameWidget::GameWidget(QWidget *parent) : QWidget(parent)
 {
-    this->setMinimumSize(550, 400);
-    this->resize(550, 400);
+    this->setMinimumSize(minSize);
+    this->resize(minSize);
     this->setWindowTitle(tr("Alchemy"));
 
     initializeDialog();
@@ -55,7 +60,6 @@ void GameWidget::addElementToWorkspace(QGraphicsSceneMouseEvent *e)
     {
         elementItem *ei = qobject_cast<elementItem*>(sender());
         addElementToWorkspace(ei->base())->setPos(ei->mapToScene(0, 0));
-        //showOrHideDrawer();
     }
 }
 
@@ -71,7 +75,7 @@ elementItem* GameWidget::addElementToDrawer(const element &e)
 
     if (known_elements.length() == 0)
     {
-        ei->setPos(18, 5);
+        ei->setPos(drawerItemOffsetX, drawerItemOffsetY);
         known_elements << ei;
     }
     else
@@ -81,11 +85,10 @@ elementItem* GameWidget::addElementToDrawer(const element &e)
         {
             if (e.id().compare(known_elements[i]->base().id()) < 0)
             {
+                // 插入并调整其它项的位置
                 known_elements.insert(i, ei);
                 for (int j = i; j < known_elements.length(); j++)
-                {
-                    known_elements[j]->setPos(j % 4 * 64 + 18, j / 4 * 84 + 5);
-                }
+                    known_elements[j]->setPos(j % 4 * 64 + drawerItemOffsetX, j / 4 * 84 + drawerItemOffsetY);
 
                 break;
             }
@@ -93,7 +96,7 @@ elementItem* GameWidget::addElementToDrawer(const element &e)
 
         if (i == known_elements.length())
         {
-            ei->setPos(known_elements.length() % 4 * 64 + 18, known_elements.length() / 4 * 84 + 5);
+            ei->setPos(known_elements.length() % 4 * 64 + drawerItemOffsetX, known_elements.length() / 4 * 84 + drawerItemOffsetY);
             known_elements << ei;
         }
     }
@@ -106,9 +109,9 @@ void GameWidget::fadeInAndAdd(elementItem *item)
     item->setOpacity(0);
     item->setParentItem(ws_parent);
 
-    QTimeLineE *tl = new QTimeLineE(250, this);
+    QTimeLineE *tl = new QTimeLineE(AnimationDuration, this);
     tl->target = item;
-    tl->setFrameRange(0, 200);
+    tl->setFrameRange(0, AnimationDuration);
     connect(tl, SIGNAL(frameChanged(int)), this, SLOT(fadeIn_frameChanged(int)));
 
     tl->start();
@@ -116,9 +119,9 @@ void GameWidget::fadeInAndAdd(elementItem *item)
 
 void GameWidget::fadeOutAndRemove(elementItem *item)
 {
-    QTimeLineE *tl = new QTimeLineE(250);
+    QTimeLineE *tl = new QTimeLineE(AnimationDuration);
     tl->target = item;
-    tl->setFrameRange(0, 200);
+    tl->setFrameRange(0, AnimationDuration);
     connect(tl, SIGNAL(finished()), this, SLOT(fadeOut_finished()));
     connect(tl, SIGNAL(frameChanged(int)), this, SLOT(fadeOut_frameChanged(int)));
 
@@ -130,13 +133,13 @@ void GameWidget::initializeDialog()
     dialog = NULL;
 
     shield = new mouseShield();
-    shield->setSize(550, 400);
+    shield->setSize(this->size());
     connect(shield, SIGNAL(mouseReleased()), this, SLOT(shield_mouseReleased()));
 
     dialog_a = new QPropertyAnimation(shield, "opacity", this);
     dialog_a->setStartValue(0);
     dialog_a->setEndValue(1);
-    dialog_a->setDuration(200);
+    dialog_a->setDuration(AnimationDuration);
     connect(dialog_a, SIGNAL(finished()), this, SLOT(dialog_a_finished()));
 }
 
@@ -163,7 +166,7 @@ void GameWidget::initializeWorkspace()
     ws_blur_a = new QPropertyAnimation(ws_blur, "blurRadius", this);
     ws_blur_a->setStartValue(0);
     ws_blur_a->setEndValue(5);
-    ws_blur_a->setDuration(200);
+    ws_blur_a->setDuration(AnimationDuration);
 }
 
 void GameWidget::initializeDrawer()
@@ -265,7 +268,7 @@ void GameWidget::setScrollBars()
 void GameWidget::fadeIn_frameChanged(int frame)
 {
     elementItem *fadeIn_target = qobject_cast<QTimeLineE *>(sender())->target;
-    fadeIn_target->setOpacity(frame / 200.0);
+    fadeIn_target->setOpacity(frame / AnimationDurationF);
 }
 
 void GameWidget::fadeOut_finished()
@@ -277,7 +280,7 @@ void GameWidget::fadeOut_finished()
 void GameWidget::fadeOut_frameChanged(int frame)
 {
     elementItem *fadeOut_target = qobject_cast<QTimeLineE *>(sender())->target;
-    fadeOut_target->setOpacity(1 - frame / 200.0);
+    fadeOut_target->setOpacity(1 - frame / AnimationDurationF);
 }
 
 void GameWidget::elementItems_mousePressed(QGraphicsSceneMouseEvent *e)

@@ -46,22 +46,20 @@ signals:
     void mouseReleased(QGraphicsSceneMouseEvent *e);
 
 private:
-    const static QString blackText;
-    const static QString whiteText;
-
     element _base;
     rectangleItem *background_rect;
     imageItem *icon;
     textItem *label;
     QGraphicsDropShadowEffect *shadow;
 
-    QPointN _press, p_press;
+    QPointN _press;         // 用户按下鼠标时，鼠标坐标在场景中的相对位置
+    QPointN p_press;        // 用户按下鼠标时，elementItem的位置（pos）
     QTimeLine *tl;
     double fade_start, fade_to;
     
     bool _drawerStyle;
-    bool _drag;
-    bool _allowDrag;
+    bool _drag;             // 是否允许拖动（由用户指定）
+    bool _allowDrag;        // 是否可以开始拖动了（由程序得到）
 
     void fadeBackgroundRect(const double &start, const double &to);
     

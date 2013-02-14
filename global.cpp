@@ -1,12 +1,6 @@
-#include "helper.h"
+#include "global.h"
 #include <algorithm>
 using namespace std;
-
-void debug_out(const QString &msg)
-{
-    static QTextStream cout(stdout);
-    cout << msg << endl;
-}
 
 void drawScaledImage(QPainter *painter, const QImage &image, const double &x, const double &y, const double &width, const double &height)
 {

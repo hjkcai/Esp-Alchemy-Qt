@@ -1,6 +1,6 @@
 #include "combination.h"
 #include <QtCore>
-#include "helper.h"
+#include "global.h"
 
 combinations combination::allCombinations;
 
