@@ -43,6 +43,12 @@ private:
     QPropertyAnimation *dialog_a;
     mouseShield *shield;
 
+    // "删除"有关的对象
+    imageItem *deleteItem;
+    QGraphicsDropShadowEffect *deleteGlow;
+    QPropertyAnimation *deleteAnimation;
+    QPropertyAnimation *deleteGlowAnimation;
+
     elementItem* addElementToWorkspace(const element &e);
     elementItem* addElementToDrawer(const element &e);
 
@@ -63,6 +69,7 @@ private slots:
     void elementItems_mousePressed(QGraphicsSceneMouseEvent *);
     void elementItems_mouseRightButtonPressed(QGraphicsSceneMouseEvent *);
     void elementItems_mouseReleased(QGraphicsSceneMouseEvent *);
+    void elementItems_posChanged();
 
     void fadeIn_frameChanged(int frame);
     void fadeOut_finished();

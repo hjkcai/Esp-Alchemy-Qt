@@ -28,6 +28,11 @@ drawerGraphicsItem::drawerGraphicsItem(QGraphicsItem *parent)  : graphicsItemBas
 {
     scaledImageBuffer = QImage(":/res/linen.png").scaled(drawerSize - 5, drawerSize - 5, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     this->setAcceptHoverEvents(true);
+
+    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect(this);
+    shadow->setBlurRadius(15);
+    shadow->setOffset(-3, 0);
+    this->setGraphicsEffect(shadow);
 }
 
 void drawerGraphicsItem::paintEvent(QPainter *p)
@@ -52,13 +57,7 @@ void drawerGraphicsItem::updateBuffer(const QSizeF &size)
         bpainter->end(); delete bpainter;
     }
 
-    QLinearGradient a(0, 0, 5, 0);
-    a.setColorAt(0, QColor::fromRgb(0, 0, 0, 0));
-    a.setColorAt(1, QColor::fromRgb(0, 0, 0, 96));
     painter->setPen(QPen(Qt::transparent));
-    painter->setBrush(a);
-    painter->drawRect(0, 0, 5, size.height());
-
     painter->translate(5, 0);
     painter->drawImage(0, 0, backgroundBuffer);
 
@@ -68,6 +67,11 @@ void drawerGraphicsItem::updateBuffer(const QSizeF &size)
 
     painter->setBrush(bg);
     painter->drawRect(0, 0, size.width(), size.height());
+
+    // 边缘处会出现杂色，这样可以清除杂色
+    painter->translate(-5, 0);
+    painter->setCompositionMode(QPainter::CompositionMode_Clear);
+    painter->drawRect(0, 0, 5, size.height());
 
     painter->end(); delete painter;
     _size = size;

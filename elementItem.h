@@ -69,8 +69,8 @@ private slots:
 protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
-    void mousePressEvent(QGraphicsSceneMouseEvent *e);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
+    void mousePressEvent(QGraphicsSceneMouseEvent *e);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) { }
 };

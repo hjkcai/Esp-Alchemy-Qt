@@ -47,6 +47,8 @@ elementItem* GameWidget::addElementToWorkspace(const element &e)
     connect(ei, SIGNAL(mousePressed(QGraphicsSceneMouseEvent*)), this, SLOT(elementItems_mousePressed(QGraphicsSceneMouseEvent*)));
     connect(ei, SIGNAL(mousePressed(QGraphicsSceneMouseEvent*)), this, SLOT(elementItems_mouseRightButtonPressed(QGraphicsSceneMouseEvent*)));
     connect(ei, SIGNAL(mouseReleased(QGraphicsSceneMouseEvent*)), this, SLOT(elementItems_mouseReleased(QGraphicsSceneMouseEvent*)));
+    connect(ei, SIGNAL(xChanged()), this, SLOT(elementItems_posChanged()));
+    connect(ei, SIGNAL(yChanged()), this, SLOT(elementItems_posChanged()));
 
     workspace << ei;
     fadeInAndAdd(ei);
@@ -167,6 +169,28 @@ void GameWidget::initializeWorkspace()
     ws_blur_a->setStartValue(0);
     ws_blur_a->setEndValue(5);
     ws_blur_a->setDuration(AnimationDuration);
+
+    // 删除/信息有关的对象
+
+    deleteItem = new imageItem(QImage(":/data/res/trashcan.png"), ws_parent);
+    deleteItem->setPaintMode(imageItem::centerScale);
+    deleteItem->setPos(-48, 0);
+    deleteItem->setSize(48, 48);
+
+    deleteGlow = new QGraphicsDropShadowEffect(deleteItem);
+    deleteGlow->setBlurRadius(15);
+    deleteGlow->setColor(QColor(255, 0, 0, 0));
+    deleteGlow->setOffset(0);
+    deleteItem->setGraphicsEffect(deleteGlow);
+
+    deleteAnimation = new QPropertyAnimation(deleteItem, "pos", deleteItem);
+    deleteAnimation->setDuration(AnimationDuration);
+    deleteAnimation->setEasingCurve(QEasingCurve::InQuad);
+
+    deleteGlowAnimation = new QPropertyAnimation(deleteGlow, "color", deleteGlow);
+    deleteGlowAnimation->setDuration(200);
+    deleteGlowAnimation->setStartValue(QColor(255, 0, 0, 0));
+    deleteGlowAnimation->setEndValue(QColor(255, 0, 0));
 }
 
 void GameWidget::initializeDrawer()
@@ -283,10 +307,42 @@ void GameWidget::fadeOut_frameChanged(int frame)
     fadeOut_target->setOpacity(1 - frame / AnimationDurationF);
 }
 
+void GameWidget::elementItems_posChanged()
+{
+    elementItem *e = qobject_cast<elementItem *>(sender());
+
+    // 判断是否拖入垃圾箱中
+    if (e->collidesWithItem(deleteItem))
+    {
+        if (deleteGlow->color().alpha() == 0)
+        {
+            deleteGlowAnimation->stop();
+            deleteGlowAnimation->setDirection(QPropertyAnimation::Forward);
+            deleteGlowAnimation->start();
+        }
+    }
+    else
+    {
+        if (deleteGlow->color().alpha() == 255)
+        {
+            deleteGlowAnimation->stop();
+            deleteGlowAnimation->setDirection(QPropertyAnimation::Backward);
+            deleteGlowAnimation->start();
+        }
+    }
+}
+
 void GameWidget::elementItems_mousePressed(QGraphicsSceneMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton)
+    {
         workspace.bringToFront(qobject_cast<elementItem *>(sender()));
+
+        deleteAnimation->setStartValue(QPointF(-48, this->height() / 2.0 - 24));
+        deleteAnimation->setEndValue(QPointF(5, this->height() / 2.0 - 24));
+        deleteAnimation->setDirection(QPropertyAnimation::Forward);
+        deleteAnimation->start();
+    }
 }
 
 void GameWidget::elementItems_mouseRightButtonPressed(QGraphicsSceneMouseEvent *e)
@@ -300,7 +356,24 @@ void GameWidget::elementItems_mouseRightButtonPressed(QGraphicsSceneMouseEvent *
 
 void GameWidget::elementItems_mouseReleased(QGraphicsSceneMouseEvent *)
 {
-    elementItems es = workspace.collidesItems(qobject_cast<elementItem *>(sender()), true);
+    // 先隐藏垃圾箱
+    if (deleteItem->x() == 5)
+    {
+        deleteAnimation->setDirection(QPropertyAnimation::Backward);
+        deleteAnimation->start();
+    }
+
+    elementItem *e = qobject_cast<elementItem *>(sender());
+
+    // 判断是否拖入垃圾箱中
+    if (e->collidesWithItem(deleteItem))
+    {
+        workspace.remove(e);
+        fadeOutAndRemove(e);
+        return;
+    }
+
+    elementItems es = workspace.collidesItems(e, true);
     int result = combine(es.toElements());
 
     if (!(es.length() == 0 || result == -1))
@@ -399,6 +472,7 @@ void GameWidget::resizeEvent(QResizeEvent *e)
 
     if (dialog) dialog_resized(NULL);
     shield->setSize(this->size());
+
 
     setScrollBars();
 }
