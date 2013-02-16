@@ -15,7 +15,7 @@ Alchemy是一款Android平台上的元素组合游戏，（[传送门](http://ww
 编译
 ----------
 
-> 1. [下载Qt 4.8.4库](http://qt-project.org/downloads)，Windows平台的编译还需安装含有**gcc 4.4**的MinGW平台
+> 1. [下载Qt 4.8.4库](http://qt-project.org/downloads)，Windows下的编译还需安装含有gcc 4.4的MinGW
 > 2. `qmake Alchemy.pro`
 > 3. `make`
 > 4. `make clean`（可选）

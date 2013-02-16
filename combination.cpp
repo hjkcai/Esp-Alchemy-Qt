@@ -55,10 +55,10 @@ void initializeAllCombinations()
                     ).arg(QApplication::applicationDirPath()));
     source_data->open(QFile::ReadOnly | QFile::Text);
 
-    CDes des;
-    QString read = QString::fromStdString(des.Des_DecryptText(QString(source_data->readAll()).toStdString(), "eaLcHeMy"));
+    //CDes des;
+    //QString read = QString::fromStdString(des.Des_DecryptText(QString(source_data->readAll()).toStdString(), "eaLcHeMy"));
 
-    combination::allCombinations = readCombinations(read);
+    combination::allCombinations = readCombinations(source_data->readAll()/*read*/);
     source_data->close(); delete source_data;
 }
 

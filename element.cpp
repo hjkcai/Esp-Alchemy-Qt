@@ -55,9 +55,9 @@ void initializeAllElements()
 
     source_data->open(QFile::ReadOnly | QFile::Text);
 
-    CDes des;
-    QString read = QString::fromStdString(des.Des_DecryptText(QString(source_data->readAll()).toStdString(), "eaLcHeMy"));
-    QStringList datal = read.split('\n', QString::SkipEmptyParts);
+//    CDes des;
+//    QString read = QString::fromStdString(des.Des_DecryptText(QString(source_data->readAll()).toStdString(), "eaLcHeMy"));
+    QStringList datal = QString(source_data->readAll())/*read*/.split('\n', QString::SkipEmptyParts);
 
     for (int i = 0; i < datal.count(); i++)
     {
