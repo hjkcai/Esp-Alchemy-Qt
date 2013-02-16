@@ -1,6 +1,8 @@
 #include "gamewidget.h"
 #include "elementdetaildialog.h"
+#include "introdialog.h"
 #include "global.h"
+#include <QGLWidget>
 #include <cmath>
 #include <string>
 using namespace std;
@@ -25,6 +27,8 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent)
 
     for (int i = 0; i < 4; i++)
         addElementToWorkspace(element::allElements[i])->setPos(this->width() / 2 + (i - 2) * 64, this->height() / 2 - 84 / 2);
+
+    showDialog(new introDialog());
 }
 
 void GameWidget::showDialog(dialogBase *d)
@@ -159,7 +163,8 @@ void GameWidget::initializeWorkspace()
     ws_gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ws_gv->setRenderHints(QPainter::Antialiasing);
     ws_gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ws_gv->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    ws_gv->setViewport(new QGLWidget(this));    // OpenGL绘图
+    //ws_gv->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
     ws_blur = new QGraphicsBlurEffect(this);
     ws_blur->setBlurRadius(0);
@@ -172,7 +177,7 @@ void GameWidget::initializeWorkspace()
 
     // 删除/信息有关的对象
 
-    deleteItem = new imageItem(QImage(":/data/res/trashcan.png"), ws_parent);
+    deleteItem = new imageItem(QImage(":/data/trashcan.png"), ws_parent);
     deleteItem->setPaintMode(imageItem::centerScale);
     deleteItem->setPos(-48, 0);
     deleteItem->setSize(48, 48);
@@ -223,10 +228,15 @@ void GameWidget::loadGame(const QString &username)
     known_combinations.clear();
     known_elements.clear();
     workspace.clear();
-//    ws_parent->children().clear()
-//    dwr_parent->children().clear();
 
-    QFile *saves = new QFile(QString("%0/saves/%1.sav").arg(QApplication::applicationDirPath()).arg(username));
+    QFile *saves = new QFile(QString(
+                             #ifndef Q_OS_MAC
+                                 "%0/saves/%1.sav"
+                             #else
+                                 "%0/../Resources/saves/%1.sav"
+                             #endif
+                             ).arg(QApplication::applicationDirPath()).arg(username));
+
     if (saves->exists())
     {
         saves->open(QFile::ReadOnly);
@@ -266,9 +276,19 @@ void GameWidget::saveGame()
 
     data = QString::fromStdString(des.Des_EncryptText(data.toStdString(), username.toStdString()));
 
-    QFile *saves = new QFile(QString("%0/saves/%1.sav").arg(QApplication::applicationDirPath()).arg(username));
+    QFile *saves = new QFile(QString(
+                                 #ifndef Q_OS_MAC
+                                     "%0/saves/%1.sav"
+                                 #else
+                                     "%0/../Resources/saves/%1.sav"
+                                 #endif
+                                 ).arg(QApplication::applicationDirPath()).arg(username));
 
-    QDir d(QApplication::applicationDirPath());
+    QDir d(QApplication::applicationDirPath()
+       #ifdef Q_OS_MAC
+           + "/../Resources"
+       #endif
+           );
     if (!d.exists("saves")) d.mkdir("saves");
 
     saves->open(QFile::WriteOnly);

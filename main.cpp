@@ -10,6 +10,16 @@ int main(int argc, char **argv)
     QTextCodec::setCodecForCStrings(codec);
     QTextCodec::setCodecForTr(codec);
 
+    QTranslator *translator = new QTranslator();
+    translator->load(QString(
+                #ifndef Q_OS_MAC
+                     "%0/res/zh-cn.qm"
+                #else
+                     "%0/../Resources/zh-cn.qm"
+                #endif
+                    ).arg(QApplication::applicationDirPath()));
+    app.installTranslator(translator);
+
     initializeAllElements();
     initializeAllCombinations();
 

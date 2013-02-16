@@ -1,6 +1,7 @@
 #include "element.h"
 #include <QtCore>
-#include "helper.h"
+#include "des.h"
+#include "global.h"
 
 elements element::allElements;
 
@@ -22,13 +23,6 @@ int elements::findElementByID(const QString &id, const int &start) const
     {
         if (this->at(i)._id.toLower() == id.toLower())
         {
-//            if (mark)
-//            {
-//                if (this->at(i).mark)
-//                    continue;
-//                else (*this)[i].mark = true;
-//            }
-
             return i;
         }
     }
@@ -42,13 +36,6 @@ int elements::findElementByName(const QString &name, const int &start) const
     {
         if (this->at(i)._name.toLower() == name.toLower())
         {
-//            if (mark)
-//            {
-//                if (this->at(i).mark)
-//                    continue;
-//                else this->at(i).mark = true;
-//            }
-
             return i;
         }
     }
@@ -58,11 +45,23 @@ int elements::findElementByName(const QString &name, const int &start) const
 
 void initializeAllElements()
 {
-    QFile source_data(":/res/combinations.txt"); source_data.open(QFile::ReadOnly | QFile::Text);
+    QFile *source_data = new QFile(QString(
+#ifndef Q_OS_MAC
+                      "%0/res/combinations"
+#else
+                      "%0/../Resources/combinations"
+#endif
+                    ).arg(QApplication::applicationDirPath()));
 
-    while (!source_data.atEnd())
+    source_data->open(QFile::ReadOnly | QFile::Text);
+
+    CDes des;
+    QString read = QString::fromStdString(des.Des_DecryptText(QString(source_data->readAll()).toStdString(), "eaLcHeMy"));
+    QStringList datal = read.split('\n', QString::SkipEmptyParts);
+
+    for (int i = 0; i < datal.count(); i++)
     {
-        QString data = QString(source_data.readLine()).trimmed();
+        QString data = datal[i].trimmed();
 
         QString id = subString(data, "*", ":");
         bool basic = false;
@@ -75,8 +74,16 @@ void initializeAllElements()
 
         QString name = subString(subString(data, ":", "="), QString::null, "+");
         bool terminal = data[0] == '*';
-        QImage icon(QString(":/res/%0.png").arg(id));
+        QImage icon(QString(
+#ifndef Q_OS_MAC
+                            "%0/res/%1.png"
+#else
+                            "%0/../Resources/%1.png"
+#endif
+                           ).arg(QApplication::applicationDirPath()).arg(id));
 
         element::allElements << element::create(id, icon, name, terminal, basic);
     }
+
+    source_data->close(); delete source_data;
 }

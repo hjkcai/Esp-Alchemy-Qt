@@ -11,7 +11,8 @@ SOURCES += \
     gamewidget.cpp \
     scrollbar.cpp \
     elementdetaildialog.cpp \
-    global.cpp
+    global.cpp \
+    introdialog.cpp
 
 RESOURCES += \
     res.qrc
@@ -28,4 +29,9 @@ HEADERS += \
     gamewidget.h \
     scrollbar.h \
     elementdetaildialog.h \
-    global.h
+    global.h \
+    introdialog.h
+
+QT += opengl
+
+TRANSLATIONS += Alchemy.ts

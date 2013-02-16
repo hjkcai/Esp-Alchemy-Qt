@@ -26,7 +26,7 @@ void graphicsViewBase::mousePressEvent(QMouseEvent *event)
 
 drawerGraphicsItem::drawerGraphicsItem(QGraphicsItem *parent)  : graphicsItemBase(parent)
 {
-    scaledImageBuffer = QImage(":/res/linen.png").scaled(drawerSize - 5, drawerSize - 5, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    scaledImageBuffer = QImage(":/data/linen.png").scaled(drawerSize - 5, drawerSize - 5, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     this->setAcceptHoverEvents(true);
 
     QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect(this);

@@ -1,5 +1,5 @@
 #include "imageItem.h"
-#include "helper.h"
+#include "global.h"
 #include <algorithm>
 #include <cmath>
 using namespace std;
