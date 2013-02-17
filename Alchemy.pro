@@ -35,3 +35,12 @@ HEADERS += \
 QT += opengl
 
 TRANSLATIONS += Alchemy.ts
+
+win32 {
+    RC_FILE = Alchemy.rc
+}
+
+mac {
+    ICON = icon.icns
+    QMAKE_INFO_PLIST = Info.plist
+}

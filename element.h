@@ -39,6 +39,6 @@ public:
     int findElementByName(const QString &name, const int &start = 0) const;
 };
 
-void initializeAllElements();
+bool initializeAllElements();
 
 #endif // ELEMENT_H

@@ -43,7 +43,7 @@ int elements::findElementByName(const QString &name, const int &start) const
     return -1;
 }
 
-void initializeAllElements()
+bool initializeAllElements()
 {
     QFile *source_data = new QFile(QString(
 #ifndef Q_OS_MAC
@@ -53,7 +53,8 @@ void initializeAllElements()
 #endif
                     ).arg(QApplication::applicationDirPath()));
 
-    source_data->open(QFile::ReadOnly | QFile::Text);
+    if (!source_data->open(QFile::ReadOnly | QFile::Text))
+        return false;
 
 //    CDes des;
 //    QString read = QString::fromStdString(des.Des_DecryptText(QString(source_data->readAll()).toStdString(), "eaLcHeMy"));
@@ -86,4 +87,5 @@ void initializeAllElements()
     }
 
     source_data->close(); delete source_data;
+    return element::allElements.count() != 0;
 }

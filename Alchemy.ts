@@ -10,6 +10,19 @@
     </message>
 </context>
 <context>
+    <name>QObject</name>
+    <message>
+        <location filename="main.cpp" line="25"/>
+        <source>Fatal Error!</source>
+        <translation>错误！</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="25"/>
+        <source>Can not read source data file! Alchemy will now exit.</source>
+        <translation>无法读取数据文件！Alchemy无法继续运行。</translation>
+    </message>
+</context>
+<context>
     <name>elementDetailDialog</name>
     <message>
         <location filename="elementdetaildialog.cpp" line="67"/>

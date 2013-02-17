@@ -20,7 +20,12 @@ int main(int argc, char **argv)
                     ).arg(QApplication::applicationDirPath()));
     app.installTranslator(translator);
 
-    initializeAllElements();
+    if (!initializeAllElements())
+    {
+        QMessageBox::critical(NULL, QObject::tr("Fatal Error!"), QObject::tr("Can not read source data file! Alchemy will now exit."));
+        return -1;
+    }
+
     initializeAllCombinations();
 
     GameWidget *mw = new GameWidget();

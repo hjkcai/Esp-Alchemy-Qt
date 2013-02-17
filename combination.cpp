@@ -67,9 +67,9 @@ combinations readCombinations(const QString &source)
     QStringList sources = source.split('\n');
     combinations ret;
 
-    for (int i = 0; i < sources.count(); i++)
+    for (int j = 0; j < sources.count(); j++)
     {
-        QString data = sources[i].trimmed();
+        QString data = sources[j].trimmed();
 
         if (data[0] == '*' || data[0] == '#')
         {
