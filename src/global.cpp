@@ -36,3 +36,5 @@ QString subString(const QString &s,const QString &after, const QString &before)
 
     return s.mid(start, end - start + 1);
 }
+
+QString ResourcesDir;

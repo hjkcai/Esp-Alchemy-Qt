@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "global.h"
 #include <algorithm>
 #include <cmath>
 using namespace std;
@@ -26,7 +27,7 @@ void graphicsViewBase::mousePressEvent(QMouseEvent *event)
 
 drawerGraphicsItem::drawerGraphicsItem(QGraphicsItem *parent)  : graphicsItemBase(parent)
 {
-    scaledImageBuffer = QImage(":/data/linen.png").scaled(drawerSize - 5, drawerSize - 5, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    scaledImageBuffer = QImage(ResourcesDir.arg("linen.png")).scaled(drawerSize - 5, drawerSize - 5, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     this->setAcceptHoverEvents(true);
 
     QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect(this);

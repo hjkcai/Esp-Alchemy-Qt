@@ -1,46 +1,45 @@
 SOURCES += \
-    main.cpp \
-    element.cpp \
-    combination.cpp \
-    textItem.cpp \
-    rectangleItem.cpp \
-    imageItem.cpp \
-    elementItem.cpp \
-    graphics.cpp \
-    des.cpp \
-    gamewidget.cpp \
-    scrollbar.cpp \
-    elementdetaildialog.cpp \
-    global.cpp \
-    introdialog.cpp
+    src/main.cpp \
+    src/element.cpp \
+    src/combination.cpp \
+    src/textItem.cpp \
+    src/rectangleItem.cpp \
+    src/imageItem.cpp \
+    src/elementItem.cpp \
+    src/graphics.cpp \
+    src/gamewidget.cpp \
+    src/scrollbar.cpp \
+    src/elementdetaildialog.cpp \
+    src/global.cpp \
+    src/introdialog.cpp \
+    src/achievement.cpp
 
-RESOURCES += \
-    res.qrc
+RESOURCES +=
 
 HEADERS += \
-    element.h \
-    combination.h \
-    textItem.h \
-    rectangleItem.h \
-    imageItem.h \
-    elementItem.h \
-    graphics.h \
-    des.h \
-    gamewidget.h \
-    scrollbar.h \
-    elementdetaildialog.h \
-    global.h \
-    introdialog.h
+    src/element.h \
+    src/combination.h \
+    src/textItem.h \
+    src/rectangleItem.h \
+    src/imageItem.h \
+    src/elementItem.h \
+    src/graphics.h \
+    src/gamewidget.h \
+    src/scrollbar.h \
+    src/elementdetaildialog.h \
+    src/global.h \
+    src/introdialog.h \
+    src/achievement.h
 
 QT += opengl
 
-TRANSLATIONS += Alchemy.ts
+TRANSLATIONS += sres/Alchemy.ts
 
 win32 {
-    RC_FILE = Alchemy.rc
+    RC_FILE = sres/Alchemy.rc
 }
 
 mac {
-    ICON = icon.icns
-    QMAKE_INFO_PLIST = Info.plist
+    ICON = sres/icon.icns
+    QMAKE_INFO_PLIST = sres/Info.plist
 }

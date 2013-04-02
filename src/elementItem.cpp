@@ -5,8 +5,6 @@ const double HoverOpacity = 0.5;
 const double PressedOpacity = 0.75;
 const QString blackText = "<font align=\"center\" color=\"black\">%0</font>";
 const QString whiteText = "<font align=\"center\" color=\"white\">%0</font>";
-const QColor drawerStyleBackground = QColor(29, 82, 255);
-const QColor normalBackground = QColor(160, 160, 160);
 
 elementItem::elementItem(const element &base, QGraphicsItem *parent) : QGraphicsObject(parent)
 {
@@ -68,12 +66,12 @@ void elementItem::setDrawerStyle(const bool &value)
 
     if (_drawerStyle)
     {
-        background_rect->setBrush(drawerStyleBackground);
+        background_rect->setBrush(QColor(29, 82, 255));
         shadow->setColor(Qt::black);
     }
     else
     {
-        background_rect->setBrush(normalBackground);
+        background_rect->setBrush(QColor(160, 160, 160));
         shadow->setColor(Qt::white);
     }
 }

@@ -1,6 +1,5 @@
 #include "combination.h"
 #include <QtCore>
-#include "des.h"
 #include "global.h"
 
 combinations combination::allCombinations;
@@ -46,17 +45,8 @@ int combinations::findCombination(const elements &target)
 
 void initializeAllCombinations()
 {
-    QFile *source_data = new QFile(QString(
-#ifndef Q_OS_MAC
-                      "%0/res/combinations"
-#else
-                      "%0/../Resources/combinations"
-#endif
-                    ).arg(QApplication::applicationDirPath()));
+    QFile *source_data = new QFile(ResourcesDir.arg("combinations"));
     source_data->open(QFile::ReadOnly | QFile::Text);
-
-    //CDes des;
-    //QString read = QString::fromStdString(des.Des_DecryptText(QString(source_data->readAll()).toStdString(), "eaLcHeMy"));
 
     combination::allCombinations = readCombinations(source_data->readAll()/*read*/);
     source_data->close(); delete source_data;

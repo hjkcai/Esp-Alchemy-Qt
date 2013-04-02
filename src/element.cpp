@@ -1,6 +1,5 @@
 #include "element.h"
 #include <QtCore>
-#include "des.h"
 #include "global.h"
 
 elements element::allElements;
@@ -45,19 +44,11 @@ int elements::findElementByName(const QString &name, const int &start) const
 
 bool initializeAllElements()
 {
-    QFile *source_data = new QFile(QString(
-#ifndef Q_OS_MAC
-                      "%0/res/combinations"
-#else
-                      "%0/../Resources/combinations"
-#endif
-                    ).arg(QApplication::applicationDirPath()));
+    QFile *source_data = new QFile(ResourcesDir.arg("combinations"));
 
     if (!source_data->open(QFile::ReadOnly | QFile::Text))
         return false;
 
-//    CDes des;
-//    QString read = QString::fromStdString(des.Des_DecryptText(QString(source_data->readAll()).toStdString(), "eaLcHeMy"));
     QStringList datal = QString(source_data->readAll())/*read*/.split('\n', QString::SkipEmptyParts);
 
     for (int i = 0; i < datal.count(); i++)
@@ -75,13 +66,7 @@ bool initializeAllElements()
 
         QString name = subString(subString(data, ":", "="), QString::null, "+");
         bool terminal = data[0] == '*';
-        QImage icon(QString(
-#ifndef Q_OS_MAC
-                            "%0/res/%1.png"
-#else
-                            "%0/../Resources/%1.png"
-#endif
-                           ).arg(QApplication::applicationDirPath()).arg(id));
+        QImage icon(ResourcesDir.arg(QString("%0.png").arg(id)));
 
         element::allElements << element::create(id, icon, name, terminal, basic);
     }

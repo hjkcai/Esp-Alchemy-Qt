@@ -1,9 +1,18 @@
 #include <QtGui>
+#include "achievement.h"
 #include "gamewidget.h"
+#include "global.h"
 
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
+    ResourcesDir = QString(
+#ifndef Q_OS_MAC
+                           "%0/res/%1"
+#else
+                           "%0/../Resources/%1"
+#endif
+                           ).arg(QApplication::applicationDirPath());
 
     QTextCodec *codec = QTextCodec::codecForName("UTF-8");
     QTextCodec::setCodecForLocale(codec);
@@ -11,13 +20,11 @@ int main(int argc, char **argv)
     QTextCodec::setCodecForTr(codec);
 
     QTranslator *translator = new QTranslator();
-    translator->load(QString(
-                #ifndef Q_OS_MAC
-                     "%0/res/zh-cn.qm"
-                #else
-                     "%0/../Resources/zh-cn.qm"
-                #endif
-                    ).arg(QApplication::applicationDirPath()));
+    if (!translator->load(ResourcesDir.arg("zh-cn.qm")))
+    {
+        QMessageBox::critical(NULL, QObject::tr("警告"), QObject::tr("找不到翻译文件！请确定游戏文件完整！"));
+        return -1;
+    }
     app.installTranslator(translator);
 
     if (!initializeAllElements())

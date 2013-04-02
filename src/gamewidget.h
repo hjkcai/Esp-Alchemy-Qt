@@ -3,7 +3,6 @@
 
 #include <QtGui>
 #include "combination.h"
-#include "des.h"
 #include "element.h"
 #include "elementItem.h"
 #include "graphics.h"
@@ -18,7 +17,6 @@ public:
 
 private:
     QString username;
-    CDes des;
 
     elementItems known_elements;
     QList<int> known_combinations;

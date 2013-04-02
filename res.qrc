@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/data">
-        <file>trashcan.png</file>
-        <file>linen.png</file>
-    </qresource>
-</RCC>

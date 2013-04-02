@@ -1,10 +1,9 @@
 #include "gamewidget.h"
 #include "elementdetaildialog.h"
-#include "introdialog.h"
 #include "global.h"
+#include "introdialog.h"
 #include <QGLWidget>
 #include <cmath>
-#include <string>
 using namespace std;
 
 const int drawerAnimationDuration = 200;
@@ -17,6 +16,7 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent)
     this->setMinimumSize(minSize);
     this->resize(minSize);
     this->setWindowTitle(tr("Alchemy"));
+    this->setWindowIcon(QIcon(ResourcesDir.arg("icon.png")));
 
     initializeDialog();
     initializeWorkspace();
@@ -177,7 +177,7 @@ void GameWidget::initializeWorkspace()
 
     // 删除/信息有关的对象
 
-    deleteItem = new imageItem(QImage(":/data/trashcan.png"), ws_parent);
+    deleteItem = new imageItem(QImage(ResourcesDir.arg("trashcan.png")), ws_parent);
     deleteItem->setPaintMode(imageItem::centerScale);
     deleteItem->setPos(-48, 0);
     deleteItem->setSize(48, 48);
@@ -229,18 +229,12 @@ void GameWidget::loadGame(const QString &username)
     known_elements.clear();
     workspace.clear();
 
-    QFile *saves = new QFile(QString(
-                             #ifndef Q_OS_MAC
-                                 "%0/saves/%1.sav"
-                             #else
-                                 "%0/../Resources/saves/%1.sav"
-                             #endif
-                             ).arg(QApplication::applicationDirPath()).arg(username));
+    QFile *saves = new QFile(ResourcesDir.arg(QString("%0.sav").arg(username)));
 
     if (saves->exists())
     {
         saves->open(QFile::ReadOnly);
-        QString source = QString::fromStdString(des.Des_DecryptText(QString(saves->readAll()).toStdString(), username.toStdString())).trimmed();
+        QString source = QString(saves->readAll()).trimmed();
         QStringList ke = subString(source, QString::null, "\n").trimmed().split('|'); //known_elements
         QStringList kc = subString(source, "\n", QString::null).trimmed().split('|'); //known_combinations
 
@@ -274,21 +268,9 @@ void GameWidget::saveGame()
     for (int i = 0; i < known_combinations.length(); i++)
         data.append(QString("%0|").arg(QString::number(known_combinations[i])));
 
-    data = QString::fromStdString(des.Des_EncryptText(data.toStdString(), username.toStdString()));
+    QFile *saves = new QFile(ResourcesDir.arg(QString("saves/%0.sav").arg(username)));
 
-    QFile *saves = new QFile(QString(
-                                 #ifndef Q_OS_MAC
-                                     "%0/saves/%1.sav"
-                                 #else
-                                     "%0/../Resources/saves/%1.sav"
-                                 #endif
-                                 ).arg(QApplication::applicationDirPath()).arg(username));
-
-    QDir d(QApplication::applicationDirPath()
-       #ifdef Q_OS_MAC
-           + "/../Resources"
-       #endif
-           );
+    QDir d(ResourcesDir);
     if (!d.exists("saves")) d.mkdir("saves");
 
     saves->open(QFile::WriteOnly);
