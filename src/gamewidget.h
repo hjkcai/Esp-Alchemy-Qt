@@ -35,6 +35,7 @@ private:
     scrollBar *dwr_sb;
     QGraphicsRectItem *dwr_parent;
     QPropertyAnimation *dwr_a;
+    textItem *dwr_avas;
 
     // 对话框有关的对象
     dialogBase *dialog;
@@ -59,6 +60,7 @@ private:
     void loadGame(const QString &username);
     void saveGame();
 
+    void updateDwr_avas();
     void setScrollBars();
 
 private slots:

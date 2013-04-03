@@ -50,7 +50,6 @@ private:
     rectangleItem *background_rect;
     imageItem *icon;
     textItem *label;
-    QGraphicsDropShadowEffect *shadow;
 
     QPointN _press;         // 用户按下鼠标时，鼠标坐标在场景中的相对位置
     QPointN p_press;        // 用户按下鼠标时，elementItem的位置（pos）

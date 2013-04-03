@@ -2,20 +2,27 @@
 
 textItem::textItem(QGraphicsItem *parent) : graphicsItemBase(parent)
 {
-    l = new QTextDocument();
-    l->setUseDesignMetrics(true);
-    l->setDefaultTextOption(QTextOption(Qt::AlignCenter));
-
-    setSize(75, 23);
+    initialize();
 }
 
 textItem::textItem(const QString &text, QGraphicsItem *parent) : graphicsItemBase(parent)
 {
+    initialize();
+    setText(text);
+}
+
+void textItem::initialize()
+{
     l = new QTextDocument();
     l->setUseDesignMetrics(true);
-    l->setDefaultTextOption(QTextOption(Qt::AlignCenter));
 
-    setText(text);
+    shadow = new QGraphicsDropShadowEffect(this);
+    shadow->setBlurRadius(1);
+    shadow->setColor(Qt::black);
+    shadow->setOffset(1);
+
+    this->setGraphicsEffect(shadow);
+    setAlignment(Qt::AlignCenter);
     setSize(75, 23);
 }
 

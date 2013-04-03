@@ -21,11 +21,6 @@ elementItem::elementItem(const element &base, QGraphicsItem *parent) : QGraphics
     label = new textItem(this);
     label->setSize(64, 20);
     label->setPos(0, 60);
-    
-    shadow = new QGraphicsDropShadowEffect(label);
-    shadow->setBlurRadius(1);
-    shadow->setOffset(1);
-    label->setGraphicsEffect(shadow);
 
     tl = new QTimeLine(AnimationDuration);
     tl->setFrameRange(0, AnimationDuration);
@@ -67,12 +62,12 @@ void elementItem::setDrawerStyle(const bool &value)
     if (_drawerStyle)
     {
         background_rect->setBrush(QColor(29, 82, 255));
-        shadow->setColor(Qt::black);
+        label->shadow->setColor(Qt::black);
     }
     else
     {
         background_rect->setBrush(QColor(160, 160, 160));
-        shadow->setColor(Qt::white);
+        label->shadow->setColor(Qt::white);
     }
 }
 

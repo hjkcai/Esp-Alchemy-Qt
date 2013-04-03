@@ -107,6 +107,7 @@ elementItem* GameWidget::addElementToDrawer(const element &e)
         }
     }
 
+    updateDwr_avas();
     return ei;
 }
 
@@ -205,11 +206,17 @@ void GameWidget::initializeDrawer()
     dwr->updateBuffer(QSizeF(300, this->height()));
     connect(dwr, SIGNAL(hoverEnter(QGraphicsSceneHoverEvent*)), this, SLOT(dwr_hoverEnter(QGraphicsSceneHoverEvent*)));
     connect(dwr, SIGNAL(hoverLeave(QGraphicsSceneHoverEvent*)), this, SLOT(dwr_hoverLeave(QGraphicsSceneHoverEvent*)));
+    //connect(dwr, SIGNAL(userPaint(QPainter*)), this, SLOT(paintAvailables(QPainter*)));
     ws_scene->addItem(dwr);
 
+    dwr_avas = new textItem(dwr);
+    dwr_avas->setAlignment(Qt::AlignLeft);
+    dwr_avas->setPos(15, 8);
+    dwr_avas->setSize(270, 24);
+
     dwr_sb = new scrollBar(dwr);
-    dwr_sb->setPos(0, 8);
-    dwr_sb->setSize(292, this->height() - 16);
+    dwr_sb->setPos(0, 8 + 24);
+    dwr_sb->setSize(292, this->height() - 16 - 28);
     dwr_sb->setZValue(0);
     connect(dwr_sb, SIGNAL(valueChanged()), this, SLOT(dwr_sb_valueChanged()));
 
@@ -254,6 +261,7 @@ void GameWidget::loadGame(const QString &username)
             addElementToDrawer(element::allElements[i]);
     }
 
+    updateDwr_avas();
     delete saves;
 }
 
@@ -281,12 +289,17 @@ void GameWidget::saveGame()
     delete saves;
 }
 
+void GameWidget::updateDwr_avas()
+{
+    dwr_avas->setText(QString("<font color=\"white\">已开放元素：%0/%1</font>").arg(known_elements.count()).arg(element::allElements.count()));
+}
+
 void GameWidget::setScrollBars()
 {
     ws_gv->horizontalScrollBar()->setMaximum(0);
     ws_gv->verticalScrollBar()->setMaximum(0);
 
-    int dwr_max = ceil(known_elements.length() / 4.0) * 84 + 28 - this->height();
+    int dwr_max = ceil(known_elements.length() / 4.0) * 84 - dwr_sb->size().height();
     if (dwr_max < 0) dwr_max = 0;
     dwr_sb->setMaximum(dwr_max / 84.0);
 }
@@ -470,11 +483,10 @@ void GameWidget::resizeEvent(QResizeEvent *e)
     if (e->oldSize().width() != -1)
         dwr->setPos(dwr->x() + (this->width() - e->oldSize().width()), 0);
     dwr->updateBuffer(QSizeF(300, this->height()));
-    dwr_sb->setSize(292, this->height() - 16);
+    dwr_sb->setSize(292, this->height() - 16 - 28);
 
     if (dialog) dialog_resized(NULL);
     shield->setSize(this->size());
-
 
     setScrollBars();
 }
