@@ -30,8 +30,6 @@ protected:
     virtual void resizeEvent(QResizeEvent *e) { emit resized(e); }
 };
 
-// ----------
-
 class graphicsViewBase : public QGraphicsView
 {
     Q_OBJECT
@@ -45,7 +43,22 @@ protected:
     void mousePressEvent(QMouseEvent *event);
 };
 
-// ----------
+class workspaceGraphicsItem : public graphicsItemBase
+{
+    Q_OBJECT
+public:
+    explicit workspaceGraphicsItem(QGraphicsItem *parent = 0) : graphicsItemBase(parent) { }
+
+signals:
+    void mouseDoubleClicked(QGraphicsSceneMouseEvent *e);
+
+protected:
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e)
+    {
+        emit mouseDoubleClicked(e);
+        graphicsItemBase::mouseDoubleClickEvent(e);
+    }
+};
 
 class drawerGraphicsItem : public graphicsItemBase
 {
@@ -68,8 +81,6 @@ private:
     QImage buffer, scaledImageBuffer, backgroundBuffer;
 };
 
-// ----------
-
 class dialogBase : public graphicsItemBase
 {
     Q_OBJECT
@@ -89,8 +100,6 @@ protected:
 private:
     QGraphicsDropShadowEffect *_shadow;
 };
-
-// ----------
 
 class mouseShield : public graphicsItemBase
 {

@@ -48,6 +48,7 @@ elementItem* GameWidget::addElementToWorkspace(const element &e)
 {
     elementItem *ei = new elementItem(e);
     ei->setZValue(workspace.length());
+    connect(ei, SIGNAL(copyElementItem()), this, SLOT(elementItem_copyElementItem()));
     connect(ei, SIGNAL(mousePressed(QGraphicsSceneMouseEvent*)), this, SLOT(elementItems_mousePressed(QGraphicsSceneMouseEvent*)));
     connect(ei, SIGNAL(mousePressed(QGraphicsSceneMouseEvent*)), this, SLOT(elementItems_mouseRightButtonPressed(QGraphicsSceneMouseEvent*)));
     connect(ei, SIGNAL(mouseReleased(QGraphicsSceneMouseEvent*)), this, SLOT(elementItems_mouseReleased(QGraphicsSceneMouseEvent*)));
@@ -153,7 +154,11 @@ void GameWidget::initializeDialog()
 void GameWidget::initializeWorkspace()
 {
     ws_scene = new QGraphicsScene();
-    ws_parent = ws_scene->addRect(0, 0, this->width(), this->height(), QPen(Qt::transparent), QBrush(Qt::white));
+    ws_parent = new workspaceGraphicsItem();
+    ws_parent->setPos(0, 0);
+    ws_parent->setSize(this->width(), this->height());
+    connect(ws_parent, SIGNAL(mouseDoubleClicked(QGraphicsSceneMouseEvent*)), this, SLOT(ws_parent_mouseDoubleClicked(QGraphicsSceneMouseEvent*)));
+    ws_scene->addItem(ws_parent);
 
     ws_pgv = new QWidget(this);
     ws_pgv->setGeometry(0, 0, this->width(), this->height());
@@ -176,7 +181,7 @@ void GameWidget::initializeWorkspace()
     ws_blur_a->setEndValue(5);
     ws_blur_a->setDuration(AnimationDuration);
 
-    // 删除/信息有关的对象
+    // "删除"有关的对象
 
     deleteItem = new imageItem(QImage(ResourcesDir.arg("trashcan.png")), ws_parent);
     deleteItem->setPaintMode(imageItem::centerScale);
@@ -206,7 +211,6 @@ void GameWidget::initializeDrawer()
     dwr->updateBuffer(QSizeF(300, this->height()));
     connect(dwr, SIGNAL(hoverEnter(QGraphicsSceneHoverEvent*)), this, SLOT(dwr_hoverEnter(QGraphicsSceneHoverEvent*)));
     connect(dwr, SIGNAL(hoverLeave(QGraphicsSceneHoverEvent*)), this, SLOT(dwr_hoverLeave(QGraphicsSceneHoverEvent*)));
-    //connect(dwr, SIGNAL(userPaint(QPainter*)), this, SLOT(paintAvailables(QPainter*)));
     ws_scene->addItem(dwr);
 
     dwr_avas = new textItem(dwr);
@@ -322,6 +326,12 @@ void GameWidget::fadeOut_frameChanged(int frame)
     fadeOut_target->setOpacity(1 - frame / AnimationDurationF);
 }
 
+void GameWidget::elementItem_copyElementItem()
+{
+    elementItem *s = qobject_cast<elementItem *>(sender());
+    addElementToWorkspace(s->base())->setPos(s->pos());
+}
+
 void GameWidget::elementItems_posChanged()
 {
     elementItem *e = qobject_cast<elementItem *>(sender());
@@ -429,6 +439,13 @@ void GameWidget::elementItems_mouseReleased(QGraphicsSceneMouseEvent *)
     setScrollBars();
 }
 
+void GameWidget::ws_parent_mouseDoubleClicked(QGraphicsSceneMouseEvent *e)
+{
+    // 扩展：鼠标左键，右键，中键双击出不同元素
+    for (int i = 0; i < 4; i++)
+        addElementToWorkspace(element::allElements[i])->setPos(e->pos().x() + (i - 2) * 64, e->pos().y() - 84 / 2);
+}
+
 void GameWidget::dwr_hoverEnter(QGraphicsSceneHoverEvent *)
 {
     dwr_a->stop();
@@ -475,7 +492,7 @@ void GameWidget::dialog_a_finished()
 
 void GameWidget::resizeEvent(QResizeEvent *e)
 {
-    ws_parent->setRect(0, 0, this->geometry().width(), this->geometry().height());
+    ws_parent->setSize(this->geometry().width(), this->geometry().height());
     ws_pgv->resize(this->geometry().size());
     ws_gv->resize(this->geometry().width() + 2, this->geometry().height() + 2);
 

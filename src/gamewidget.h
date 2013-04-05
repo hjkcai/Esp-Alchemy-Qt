@@ -24,7 +24,7 @@ private:
 
     // 工作区内对象
     QGraphicsScene *ws_scene;
-    QGraphicsRectItem *ws_parent;
+    workspaceGraphicsItem *ws_parent;
     QWidget *ws_pgv;
     graphicsViewBase *ws_gv;
     QGraphicsBlurEffect *ws_blur;
@@ -66,6 +66,7 @@ private:
 private slots:
     void addElementToWorkspace(QGraphicsSceneMouseEvent *e);
 
+    void elementItem_copyElementItem();
     void elementItems_mousePressed(QGraphicsSceneMouseEvent *);
     void elementItems_mouseRightButtonPressed(QGraphicsSceneMouseEvent *);
     void elementItems_mouseReleased(QGraphicsSceneMouseEvent *);
@@ -75,6 +76,7 @@ private slots:
     void fadeOut_finished();
     void fadeOut_frameChanged(int frame);
 
+    void ws_parent_mouseDoubleClicked(QGraphicsSceneMouseEvent *e);
     void dwr_hoverEnter(QGraphicsSceneHoverEvent *);
     void dwr_hoverLeave(QGraphicsSceneHoverEvent *);
     void dwr_sb_valueChanged();

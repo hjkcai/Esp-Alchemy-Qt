@@ -42,6 +42,7 @@ public:
     void setDrag(const bool &value) { _drag = value; }
 
 signals:
+    void copyElementItem();
     void mousePressed(QGraphicsSceneMouseEvent *e);
     void mouseReleased(QGraphicsSceneMouseEvent *e);
 
@@ -56,6 +57,8 @@ private:
     QTimeLine *tl;
     double fade_start, fade_to;
     
+    elementItem *link;      // 复制的对象，用于传递鼠标事件
+
     bool _drawerStyle;
     bool _drag;             // 是否允许拖动（由用户指定）
     bool _allowDrag;        // 是否可以开始拖动了（由程序得到）
@@ -68,6 +71,7 @@ private slots:
 protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);

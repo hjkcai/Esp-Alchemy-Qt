@@ -27,6 +27,7 @@ elementItem::elementItem(const element &base, QGraphicsItem *parent) : QGraphics
     connect(tl, SIGNAL(frameChanged(int)), this, SLOT(tl_frameChanged(int)));
 
     setDrawerStyle(false);
+    link = 0;
     _drag = true;
     _allowDrag = false;
 
@@ -99,6 +100,12 @@ void elementItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
     fadeBackgroundRect(HoverOpacity, 0);
 }
 
+void elementItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e)
+{
+     emit copyElementItem();
+     QGraphicsObject::mouseDoubleClickEvent(e);
+}
+
 void elementItem::mousePressEvent(QGraphicsSceneMouseEvent *e)
 {
     emit mousePressed(e);
@@ -109,6 +116,7 @@ void elementItem::mousePressEvent(QGraphicsSceneMouseEvent *e)
     if (_drag)
     {
         _press = this->mapToScene(e->pos()).toPoint(); _press.null = false;
+
         p_press = this->pos().toPoint(); _press.null = false;
         _allowDrag = true;
     }
