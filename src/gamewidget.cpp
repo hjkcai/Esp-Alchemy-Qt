@@ -1,5 +1,7 @@
-#include "gamewidget.h"
+#include "achievement.h"
+#include "configs.h"
 #include "elementdetaildialog.h"
+#include "gamewidget.h"
 #include "global.h"
 #include "introdialog.h"
 #include <QGLWidget>
@@ -21,6 +23,7 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent)
     initializeDialog();
     initializeWorkspace();
     initializeDrawer();
+    initializeAchievements();
 
     // 默认调试用户
     loadGame("tester");
@@ -68,6 +71,11 @@ void GameWidget::addElementToWorkspace(QGraphicsSceneMouseEvent *e)
         elementItem *ei = qobject_cast<elementItem*>(sender());
         addElementToWorkspace(ei->base())->setPos(ei->mapToScene(0, 0));
     }
+}
+
+void GameWidget::achievementAchieved()
+{
+    qDebug() << qobject_cast<achievement*>(sender())->name();
 }
 
 elementItem* GameWidget::addElementToDrawer(const element &e)
@@ -233,6 +241,18 @@ void GameWidget::initializeDrawer()
     dwr_a->setEasingCurve(QEasingCurve::InQuad);
 }
 
+void GameWidget::initializeAchievements()
+{
+    achievementData::known_combinations = &known_combinations;
+    achievementData::known_elements = &known_elements;
+    achievementData::workspace = &workspace;
+
+    initializeAllAchievements();
+
+    for (int i = 0; i < achievement::allAchievements.count(); i++)
+        connect(achievement::allAchievements[i], SIGNAL(achieved()), this, SLOT(achievementAchieved()));
+}
+
 void GameWidget::loadGame(const QString &username)
 {
     this->username = username;
@@ -240,24 +260,23 @@ void GameWidget::loadGame(const QString &username)
     known_elements.clear();
     workspace.clear();
 
-    QFile *saves = new QFile(ResourcesDir.arg(QString("%0.sav").arg(username)));
+    configs cf;
 
-    if (saves->exists())
+    if (cf.load(ResourcesDir.arg(QString("saves/%0.sav").arg(username))))
     {
-        saves->open(QFile::ReadOnly);
-        QString source = QString(saves->readAll()).trimmed();
-        QStringList ke = subString(source, QString::null, "\n").trimmed().split('|'); //known_elements
-        QStringList kc = subString(source, "\n", QString::null).trimmed().split('|'); //known_combinations
-
-        for (int i = 0; i < ke.count() - 1; i++)
+        for (int i = 0; i < cf.values[0].count(); i++)
         {
-            int index = element::allElements.findElementByID(ke[i]);
+            int index = element::allElements.findElementByID(cf.values[0][i]);
             if (index != -1)
                 addElementToDrawer(element::allElements[index]);
         }
 
-        for (int i = 0; i < kc.count() - 1; i++)
-            known_combinations << kc[i].toInt();
+        for (int i = 0; i < cf.values[1].count(); i++)
+            known_combinations << cf.values[1][i].toInt();
+
+        achievement::allAchievements.reset();
+        for (int i = 0; i < cf.values[2].count(); i++)
+            achievement::allAchievements[i]->setAchieveDate(QDateTime::fromString(cf.values[2][i], "yyyyMMddhhmmss"));
     }
     else
     {
@@ -266,31 +285,31 @@ void GameWidget::loadGame(const QString &username)
     }
 
     updateDwr_avas();
-    delete saves;
 }
 
 void GameWidget::saveGame()
 {
-    QString data;
+    configs cf;
+    cf.keys << "known_elements" << "known_combinations" << "achievements";
+
+    QList<QString> ke;
     for (int i = 0; i < known_elements.length(); i++)
-        data.append(QString("%0|").arg(known_elements[i]->base().id()));
+        ke << QString("%0").arg(known_elements[i]->base().id());
 
-    data.append('\n');
-
+    QList<QString> kc;
     for (int i = 0; i < known_combinations.length(); i++)
-        data.append(QString("%0|").arg(QString::number(known_combinations[i])));
+        kc << QString("%0").arg(QString::number(known_combinations[i]));
 
-    QFile *saves = new QFile(ResourcesDir.arg(QString("saves/%0.sav").arg(username)));
+    QList<QString> ac;
+    for (int i = 0; i < achievement::allAchievements.count(); i++)
+        ac << achievement::allAchievements[i]->achieveDate().toString("yyyyMMddhhmmss");
+
+    cf.values << ke << kc << ac;
 
     QDir d(ResourcesDir);
     if (!d.exists("saves")) d.mkdir("saves");
 
-    saves->open(QFile::WriteOnly);
-    saves->write(data.toAscii());
-    saves->waitForBytesWritten(3000);
-    saves->flush();
-    saves->close();
-    delete saves;
+    cf.save(ResourcesDir.arg(QString("saves/%0.sav").arg(username)));
 }
 
 void GameWidget::updateDwr_avas()
@@ -310,31 +329,31 @@ void GameWidget::setScrollBars()
 
 void GameWidget::fadeIn_frameChanged(int frame)
 {
-    elementItem *fadeIn_target = qobject_cast<QTimeLineE *>(sender())->target;
+    elementItem *fadeIn_target = qobject_cast<QTimeLineE*>(sender())->target;
     fadeIn_target->setOpacity(frame / AnimationDurationF);
 }
 
 void GameWidget::fadeOut_finished()
 {
-    elementItem *fadeOut_target = qobject_cast<QTimeLineE *>(sender())->target;
+    elementItem *fadeOut_target = qobject_cast<QTimeLineE*>(sender())->target;
     ws_parent->childItems().removeOne(fadeOut_target);
 }
 
 void GameWidget::fadeOut_frameChanged(int frame)
 {
-    elementItem *fadeOut_target = qobject_cast<QTimeLineE *>(sender())->target;
+    elementItem *fadeOut_target = qobject_cast<QTimeLineE*>(sender())->target;
     fadeOut_target->setOpacity(1 - frame / AnimationDurationF);
 }
 
 void GameWidget::elementItem_copyElementItem()
 {
-    elementItem *s = qobject_cast<elementItem *>(sender());
+    elementItem *s = qobject_cast<elementItem*>(sender());
     addElementToWorkspace(s->base())->setPos(s->pos());
 }
 
 void GameWidget::elementItems_posChanged()
 {
-    elementItem *e = qobject_cast<elementItem *>(sender());
+    elementItem *e = qobject_cast<elementItem*>(sender());
 
     // 判断是否拖入垃圾箱中
     if (e->collidesWithItem(deleteItem))
@@ -433,7 +452,11 @@ void GameWidget::elementItems_mouseReleased(QGraphicsSceneMouseEvent *)
             save = true;
         }
 
-        if (save) saveGame();
+        if (save)
+        {
+            achievement::allAchievements.checkForAll();
+            saveGame();
+        }
     }
 
     setScrollBars();

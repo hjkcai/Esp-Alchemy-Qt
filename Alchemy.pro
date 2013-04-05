@@ -12,7 +12,8 @@ SOURCES += \
     src/elementdetaildialog.cpp \
     src/global.cpp \
     src/introdialog.cpp \
-    src/achievement.cpp
+    src/achievement.cpp \
+    src/configs.cpp
 
 RESOURCES +=
 
@@ -29,7 +30,8 @@ HEADERS += \
     src/elementdetaildialog.h \
     src/global.h \
     src/introdialog.h \
-    src/achievement.h
+    src/achievement.h \
+    src/configs.h
 
 QT += opengl
 

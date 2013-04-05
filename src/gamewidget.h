@@ -57,6 +57,7 @@ private:
     void initializeDialog();
     void initializeWorkspace();
     void initializeDrawer();
+    void initializeAchievements();
     void loadGame(const QString &username);
     void saveGame();
 
@@ -65,6 +66,7 @@ private:
 
 private slots:
     void addElementToWorkspace(QGraphicsSceneMouseEvent *e);
+    void achievementAchieved();
 
     void elementItem_copyElementItem();
     void elementItems_mousePressed(QGraphicsSceneMouseEvent *);

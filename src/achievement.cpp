@@ -1,7 +1,6 @@
 #include "achievement.h"
 
 achievements achievement::allAchievements;
-QString *achievementData::username;
 elementItems *achievementData::known_elements;
 QList<int> *achievementData::known_combinations;
 elementItems *achievementData::workspace;
@@ -18,10 +17,16 @@ achievement::achievement(const QString &name, const QString &description, const 
 
 bool achievement::check()
 {
-    bool oa = _achieved;
-    _achieved = _check();
+    if (!_achieved)
+    {
+        _achieved = _check();
+        if (_achieved)
+        {
+            _achieveDate = QDateTime::currentDateTime();
+            emit achieved();
+        }
+    }
 
-    if (!oa && _achieved) emit achieved();
     return _achieved;
 }
 
@@ -33,6 +38,14 @@ void achievements::checkForAll()
     }
 }
 
+void achievements::reset()
+{
+    for (int i = 0; i < this->count(); i++)
+    {
+        (*this)[i]->_check();
+    }
+}
+
 // 第一次成功组合
 bool a() { return achievementData::known_combinations->count() >= 1; }
 
@@ -41,7 +54,7 @@ bool b() { return achievementData::known_combinations->count() % 2 == 0; }
 
 void initializeAllAchievements()
 {
-    achievement *_a = new achievement(achievement::tr("a,name"), achievement::tr("a.description"), a, 10);
+    achievement *_a = new achievement(achievement::tr("a.name"), achievement::tr("a.description"), a, 10);
     achievement *_b = new achievement(achievement::tr("b.name"), achievement::tr("b.description"), b, 5);
 
     achievement::allAchievements << _a << _b;
