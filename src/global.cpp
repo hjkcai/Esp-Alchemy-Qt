@@ -38,3 +38,4 @@ QString subString(const QString &s,const QString &after, const QString &before)
 }
 
 QString ResourcesDir;
+QString GameSaveDirParent, GameSaveFileName;

@@ -13,9 +13,10 @@ public:
     bool load(const QString &filename);
     void save(const QString &filename = "");
 
-    QString getValue(const QString &key, const int &index = 0) const;
-    void setValue(const QString &key, const int &index, const QString &value);
+    QList<QString> getValue(const QString &key) const;
+    void setValue(const QString &key, const QList<QString> &value);
 
+private:
     QString _filename;
     QList<QString> keys;
     QList<QList<QString> > values;

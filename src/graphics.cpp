@@ -96,5 +96,5 @@ void dialogBase::paintEvent(QPainter *p)
 
     p->setPen(QColor(Qt::gray));
     p->setBrush(QColor(255, 255, 255, 255));
-    p->drawRoundedRect(this->boundingRect(), 5, 5);
+    p->drawRoundedRect(0, 0, size().width() - 1, size().height() - 1, 5, 5);
 }

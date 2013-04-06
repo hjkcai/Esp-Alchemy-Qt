@@ -13,7 +13,8 @@ SOURCES += \
     src/global.cpp \
     src/introdialog.cpp \
     src/achievement.cpp \
-    src/configs.cpp
+    src/configs.cpp \
+    src/notification.cpp
 
 RESOURCES +=
 
@@ -31,7 +32,8 @@ HEADERS += \
     src/global.h \
     src/introdialog.h \
     src/achievement.h \
-    src/configs.h
+    src/configs.h \
+    src/notification.h
 
 QT += opengl
 

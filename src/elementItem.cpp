@@ -63,7 +63,11 @@ void elementItem::setDrawerStyle(const bool &value)
     if (_drawerStyle)
     {
         background_rect->setBrush(QColor(29, 82, 255));
+#ifndef Q_OS_MAC
         label->shadow->setColor(Qt::black);
+#else
+        label->shadow->setColor(QColor(64, 64, 64, 192));
+#endif
     }
     else
     {

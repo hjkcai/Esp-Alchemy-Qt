@@ -6,6 +6,7 @@
 #include "element.h"
 #include "elementItem.h"
 #include "graphics.h"
+#include "notification.h"
 #include "scrollbar.h"
 
 class GameWidget : public QWidget
@@ -22,7 +23,7 @@ private:
     QList<int> known_combinations;
     elementItems workspace;
 
-    // 工作区内对象
+    // 工作区
     QGraphicsScene *ws_scene;
     workspaceGraphicsItem *ws_parent;
     QWidget *ws_pgv;
@@ -30,23 +31,27 @@ private:
     QGraphicsBlurEffect *ws_blur;
     QPropertyAnimation *ws_blur_a;
 
-    // 抽屉内对象
+    // 抽屉
     drawerGraphicsItem *dwr;
     scrollBar *dwr_sb;
     QGraphicsRectItem *dwr_parent;
     QPropertyAnimation *dwr_a;
     textItem *dwr_avas;
 
-    // 对话框有关的对象
+    // 对话框
     dialogBase *dialog;
     QPropertyAnimation *dialog_a;
     mouseShield *shield;
 
-    // "删除"有关的对象
+    // "删除"
     imageItem *deleteItem;
     QGraphicsDropShadowEffect *deleteGlow;
     QPropertyAnimation *deleteAnimation;
     QPropertyAnimation *deleteGlowAnimation;
+
+    // 通知
+    QQueue<notification*> notificationQueue;
+    bool notificationShowing;
 
     elementItem* addElementToWorkspace(const element &e);
     elementItem* addElementToDrawer(const element &e);
@@ -61,12 +66,14 @@ private:
     void loadGame(const QString &username);
     void saveGame();
 
+    void showNotification(const QImage &icon, const QString &line1, const QString &line2, const int &ap);
     void updateDwr_avas();
     void setScrollBars();
 
 private slots:
     void addElementToWorkspace(QGraphicsSceneMouseEvent *e);
     void achievementAchieved();
+    void notificationClose();
 
     void elementItem_copyElementItem();
     void elementItems_mousePressed(QGraphicsSceneMouseEvent *);

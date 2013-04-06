@@ -3,16 +3,12 @@
 #include "gamewidget.h"
 #include "global.h"
 
+void initializeGlobalStrings();
+
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
-    ResourcesDir = QString(
-#ifndef Q_OS_MAC
-                           "%0/res/%1"
-#else
-                           "%0/../Resources/%1"
-#endif
-                           ).arg(QApplication::applicationDirPath());
+    initializeGlobalStrings();
 
     QTextCodec *codec = QTextCodec::codecForName("UTF-8");
     QTextCodec::setCodecForLocale(codec);
@@ -39,4 +35,25 @@ int main(int argc, char **argv)
     mw->show();
 
     return app.exec();
+}
+
+void initializeGlobalStrings()
+{
+    ResourcesDir = QString(
+#ifndef Q_OS_MAC
+                           "%0/res/%1"
+#else
+                           "%0/../Resources/%1"
+#endif
+                           ).arg(QApplication::applicationDirPath());
+
+    GameSaveDirParent = QString(
+#ifndef Q_OS_MAC
+                           "%0/"
+#else
+                           "%0/../Resources/"
+#endif
+                           ).arg(QApplication::applicationDirPath());
+
+    GameSaveFileName = QString("%0saves/%1.sav").arg(GameSaveDirParent);
 }

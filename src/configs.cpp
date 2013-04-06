@@ -28,10 +28,8 @@ bool configs::load(const QString &filename)
         QStringList value = subString(read, "=").split('|');
         QList<QString> vs;
 
-        for (int i = 0; i < value.count() - 1; i++)
-        {
+        for (int i = 0; i < value.count(); i++)
             vs << value[i];
-        }
 
         values << vs;
     }
@@ -58,8 +56,14 @@ void configs::save(const QString &filename)
     {
         data.append(keys[i]);
         data.append('=');
+
         for (int j = 0; j < values[i].count(); j++)
-            data.append(QString("%0|").arg(values[i][j]));
+        {
+            data.append(QString("%0").arg(values[i][j]));
+            if (j != values[i].count() - 1)
+                data.append('|');
+        }
+
         data.append('\n');
     }
 
@@ -70,24 +74,21 @@ void configs::save(const QString &filename)
     delete file;
 }
 
-QString configs::getValue(const QString &key, const int &index) const
+QList<QString> configs::getValue(const QString &key) const
 {
     int i = keys.indexOf(key);
-    if (i == -1) return "";
+    if (i == -1) return QList<QString>();
 
-    return values[i][index];
+    return values[i];
 }
 
-void configs::setValue(const QString &key, const int &index, const QString &value)
+void configs::setValue(const QString &key, const QList<QString> &value)
 {
     int i = keys.indexOf(key);
     if (i == -1)
     {
-        QList<QString> l;
-        l << value;
-
         keys << key;
-        values << l;
+        values << value;
     }
-    else values[i][index] = value;
+    else values[i] = value;
 }

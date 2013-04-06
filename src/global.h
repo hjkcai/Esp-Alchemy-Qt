@@ -10,5 +10,6 @@ const int AnimationDuration = 200;
 const double AnimationDurationF = (double)AnimationDuration;
 
 extern QString ResourcesDir;
+extern QString GameSaveDirParent, GameSaveFileName;
 
 #endif // GLOBAL_H
