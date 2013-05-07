@@ -42,7 +42,7 @@ void achievements::reset()
 {
     for (int i = 0; i < this->count(); i++)
     {
-        (*this)[i]->_check();
+        (*this)[i]->_achieved = (*this)[i]->_check();
     }
 }
 

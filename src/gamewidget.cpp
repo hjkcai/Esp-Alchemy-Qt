@@ -16,7 +16,6 @@ const QSize minSize = QSize(550, 400);
 GameWidget::GameWidget(QWidget *parent) : QWidget(parent)
 {
     this->setMinimumSize(minSize);
-    this->resize(650, 450);
     this->setWindowTitle(tr("Alchemy"));
     this->setWindowIcon(QIcon(ResourcesDir.arg("icon.png")));
 
@@ -31,6 +30,7 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent)
     for (int i = 0; i < 4; i++)
         addElementToWorkspace(element::allElements[i])->setPos(this->width() / 2 + (i - 2) * 64, this->height() / 2 - 84 / 2);
 
+    this->resize(640, 450);
     //showDialog(new introDialog());
 }
 
@@ -159,21 +159,20 @@ void GameWidget::initializeWorkspace()
     ws_scene = new QGraphicsScene();
     ws_parent = new workspaceGraphicsItem();
     ws_parent->setPos(0, 0);
-    ws_parent->setSize(this->width(), this->height());
     connect(ws_parent, SIGNAL(mouseDoubleClicked(QGraphicsSceneMouseEvent*)), this, SLOT(ws_parent_mouseDoubleClicked(QGraphicsSceneMouseEvent*)));
     ws_scene->addItem(ws_parent);
 
     ws_pgv = new QWidget(this);
-    ws_pgv->setGeometry(0, 0, this->width(), this->height());
+    ws_pgv->move(0, 0);
 
     ws_gv = new graphicsViewBase(ws_scene, ws_pgv);
     ws_gv->setMouseTracking(true);
-    ws_gv->setGeometry(-1, -1, this->width() + 2, this->height() + 2);
+    ws_gv->move(-1, -1);
     ws_gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ws_gv->setRenderHints(QPainter::Antialiasing);
     ws_gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ws_gv->setViewport(new QGLWidget(this));    // OpenGL绘图
-    //ws_gv->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    ws_gv->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
     ws_blur = new QGraphicsBlurEffect(this);
     ws_blur->setBlurRadius(0);
@@ -228,7 +227,6 @@ void GameWidget::initializeDrawer()
 
     dwr_sb = new scrollBar(dwr);
     dwr_sb->setPos(0, 8 + 24);
-    dwr_sb->setSize(292, this->height() - 16 - 28);
     dwr_sb->setZValue(0);
     connect(dwr_sb, SIGNAL(valueChanged()), this, SLOT(dwr_sb_valueChanged()));
 
@@ -551,9 +549,10 @@ void GameWidget::dialog_a_finished()
 
 void GameWidget::resizeEvent(QResizeEvent *e)
 {
-    ws_parent->setSize(this->geometry().width(), this->geometry().height());
-    ws_pgv->resize(this->geometry().size());
-    ws_gv->resize(this->geometry().width() + 2, this->geometry().height() + 2);
+    ws_scene->setSceneRect(0, 0, this->width(), this->height());
+    ws_parent->setSize(this->width(), this->height());
+    ws_pgv->resize(this->size());
+    ws_gv->resize(this->width() + 2, this->height() + 2);
 
     dwr_parent->setRect(0, -8, 284, this->height());
     if (e->oldSize().width() != -1)
